@@ -104,7 +104,7 @@ var app = http.createServer(function(request,response){
         
         //create 클릭시, 폼 구현
         var template = templateHTML(title, list, `
-        <form action="http://localhost:5000/create_process" method="post">
+        <form action="http://ec2-43-200-173-32.ap-northeast-2.compute.amazonaws.com:5000/create_process" method="post">
         <!--서버에 데이터를 생성 수정 삭제시 -> post,get method를 사용-->
         <p><input type ="text" name="title" placeholder="title"></p>
         <p>
@@ -141,7 +141,7 @@ var app = http.createServer(function(request,response){
 
         fs.writeFile(`data/${title}`, description, 'utf8', function(err){
 
-          response.writeHead(302,{Location : `/?id=${title}`}); 
+          response.writeHead(302,{Location:`/?id=${encodeURI(title)}`}); 
           /*302의 뜻은 page를 다른 곳으로 redirect 시켜라
             입력된 data를 파일로 저장후, 해당되는 title page로 이동*/
           response.end();
