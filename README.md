@@ -1,7 +1,7 @@
 # Nodejs_study
 
 
- <h3>🛠Language</h3>
+ <h3>🛠Language text-align: center;</h3>
   <p align="center">
     <br/>
     <img src="https://img.shields.io/badge/-Node.js-339933?style=flat&logo=Node.js&logoColor=white" style="height : auto; margin-left : 10px; margin-right : 10px;"/>
