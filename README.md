@@ -1,9 +1,6 @@
 # Nodejs_study
 
 
-
- <p align="center">
-    <br/>
  <h3>🛠Language</h3>
   <p align="center">
     <br/>
