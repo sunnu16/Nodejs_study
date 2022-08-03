@@ -1,7 +1,6 @@
 # Nodejs_study
 
-skill
-
-
-[GitHub](https://img.shields.io/badge/-GitHub-05122A?style=flat&logo=github)
-[Node.js](https://img.shields.io/badge/-Node.js-#339933?style=flat&logo=node.js)
+ <p align="center">
+    <br/>
+    <img src="https://img.shields.io/badge/-CSS-05122A?style=flat&logo=CSS3&logoColor=1572B6"/>
+    <img src="https://img.shields.io/badge/-HTML-05122A?style=flat&logo=HTML5"/>
