@@ -1,7 +1,4 @@
-/*App - path security 설정
-      + path.parse 설정
-      + npm senitize html
-
+/*App - Homepage Mysql setting + 구현1
 */
 
 var http = require('http');
@@ -16,6 +13,17 @@ var path = require('path');
 //sanitizehtml(살균) 모듈
 var sanitizehtml =require('sanitize-html');
 
+//mysql 모듈 추가
+var mysql = require('mysql');
+var db = mysql.createConnection({
+  
+  host : '15.164.226.103', 
+  user : 'root', 
+  password : '0000',
+  database : 'app_set1' 
+});
+db.connect(); //접속 
+
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
@@ -26,7 +34,8 @@ var app = http.createServer(function(request,response){
 
       //querystring이 있다면 queryData.id이 값이 존재 없다면 존재하지않음(undeined)
       if(queryData.id === undefined){
-
+        
+        /*
         //data dir에서 파일 목록을 가져오고, 그 후 nodejs는 funcion 실행 
         fs.readdir('./data', function(error, filelist){
           //console.log(filelist);
@@ -47,7 +56,15 @@ var app = http.createServer(function(request,response){
           response.end(html);
 
         }); 
-        
+        */
+
+        //topic data 연결 확인
+        db.query(`SELECT * FROM topic`, function(error, topics){
+          console.log(topics);
+          response.writeHead(200);
+          response.end('success');
+        })
+
         //id 값을 선택한 경우 page
       } else {
 
