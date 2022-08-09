@@ -248,5 +248,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # Custom
-App_mysql/main.js
-App_mysql/mysql.js
+main.js
+mysql.js
