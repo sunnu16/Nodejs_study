@@ -2,10 +2,10 @@
 var mysql = require('mysql');
 var connection = mysql.createConnection({
 
-    host : '15.164.226.103', //DB 서버가 어디에 있는가
-    user : 'root', 
-    password : '0000',
-    database : 'app_set1' //연결할 database name
+    host : ' ********** ', //DB 서버가 어디에 있는가
+    user : ' ********** ', 
+    password : ' *********** ',
+    database : ' @@@@@@@@ ' //연결할 database name
 
 });
 
