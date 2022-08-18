@@ -22,10 +22,10 @@ var mysql = require('mysql');
 //mysql 접속
 var db = mysql.createConnection({
 
-  host:'localhost',
-  user:'root',
-  password:'0000',
-  database:'set1'
+  host:'**********',
+  user:'**********',
+  password:'**********',
+  database:'**********'
 });
 db.connect(); 
  
