@@ -247,4 +247,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#custom
+App_mysql_cleanup/lib/db.js
+
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,visualstudiocode,node,ssh,vim,git
