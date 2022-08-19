@@ -13,10 +13,7 @@ var qs = require('querystring'); //querystring 모듈 추가
 //template 모듈 추가로 변환
 var template = require('./lib/template.js');
 
-//mysql 모듈 추가
-var mysql = require('mysql');
-
-//mysql 연동
+//mysql db 연동
 var db = require('./lib/db');
  
 var app = http.createServer(function(request,response){
