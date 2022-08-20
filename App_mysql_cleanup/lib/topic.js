@@ -213,12 +213,10 @@ exports.update = function(request, response){
                 response.end(html);
             });
             //fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-            
-            
+                        
         });
 
     });
-
 }
 
 //update_process
@@ -239,18 +237,14 @@ exports.update_process = function(request, response){
         
         var post = qs.parse(body); //post에 정보가 입력    
 
-
         //mysql update
         db.query('UPDATE topic SET title=?, description=?, author_id=? WHERE id=?', [post.title, post.description, post.author, post.id], function(error, result){
 
-
             response.writeHead(302, {Location: `/?id=${post.id}`});
             response.end();
-
         })
 
     });
-
 }
 
 //delete_process

@@ -36,12 +36,12 @@ var app = http.createServer(function(request,response){
         topic.page(request, response); //topic.js        
       }
 
-    /*create page 경로 추가+설정*/  
+    //create 엔드포인트 
     } else if(pathname === '/create'){
 
       topic.create(request, response);    
 
-    //create_process 받기  
+    //create_process 엔드포인트  
     } else if(pathname === '/create_process'){
 
       topic.create_process(request, response);
@@ -51,7 +51,7 @@ var app = http.createServer(function(request,response){
 
       topic.update(request, response);
 
-    //update_process를 받을  
+    //update_process 엔드포인트 
     } else if(pathname === '/update_process'){
 
       topic.update_process(request, response);     
