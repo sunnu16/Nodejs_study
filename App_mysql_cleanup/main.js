@@ -4,6 +4,7 @@
       + Mysql join + Create detail view
       + Mysql join + Update detail view
       + Total cleanup
+      + Author 추가 
 */
 
 var http = require('http');
@@ -12,19 +13,23 @@ var qs = require('querystring'); //querystring 모듈 추가
 
 //template 모듈 추가로 변환
 var template = require('./lib/template.js');
+
 //mysql db 연동
 var db = require('./lib/db.js');
+
 //topic.js 연동
 var topic = require('./lib/topic.js');
- 
 
+//topic.js 연동
+var author = require('./lib/author.js');
+
+ 
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
 
-
-    //home                  + path가 없는 경로로 접속한다면~
+    //home + path가 없는 경로로 접속한다면~
     if(pathname === '/'){
       if(queryData.id === undefined){
         
@@ -36,12 +41,12 @@ var app = http.createServer(function(request,response){
         topic.page(request, response); //topic.js        
       }
 
-    //create 엔드포인트 
+    /*create page 경로 추가+설정*/  
     } else if(pathname === '/create'){
 
       topic.create(request, response);    
 
-    //create_process 엔드포인트  
+    //create_process 받기  
     } else if(pathname === '/create_process'){
 
       topic.create_process(request, response);
@@ -51,7 +56,7 @@ var app = http.createServer(function(request,response){
 
       topic.update(request, response);
 
-    //update_process 엔드포인트 
+    //update_process를 받을  
     } else if(pathname === '/update_process'){
 
       topic.update_process(request, response);     
@@ -60,6 +65,11 @@ var app = http.createServer(function(request,response){
     } else if(pathname === '/delete_process'){
 
       topic.delete_process(request, response);
+    
+    //author pathname
+    } else if(pathname === '/author'){
+
+      author.home(request, response);
 
     } else {
 
@@ -69,5 +79,4 @@ var app = http.createServer(function(request,response){
     
     
 });
-
 app.listen(5000);

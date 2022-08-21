@@ -21,7 +21,7 @@ exports.home = function(request, response){
         var list = template.List(topics); //topics 함수 불러오기
         var html = template.HTML(title, list,
             `<h2>${title}</h2>${description}`,
-            `<a href="/create">create</a>`
+            `<a href="/create">🌻CREATE🌻</a>`
             //templateHTML함수에 title, list
 
         );
@@ -65,11 +65,11 @@ exports.page = function(request, response){
                 ${description} 
                 <p>by ${topic[0].name}</p>
                 `,
-                ` <a href="/create">create</a>
-                    <a href="/update?id=${queryData.id}">update</a>
+                ` <a href="/create">🌻CREATE🌻</a><br><br>
+                    <a href="/update?id=${queryData.id}">💡UPDATE💡</a><br><br>
                     <form action="delete_process" method="post">
                         <input type="hidden" name="id" value="${queryData.id}">
-                        <input type="submit" value="delete">
+                        <input type="submit" value="🔥delete🔥">
                     </form>`
 
             ); //templateHTML함수에 title, list
@@ -101,11 +101,11 @@ exports.create = function(request, response){
                     ${template.authorSelect(authors)}
                 </p>
                 <p>
-                    <input type="submit">
+                    <input type="submit" value="🔥submit🔥">
                 </p>
                 </form>
                 `,
-                `<a href="/create">create</a>`
+                `<a href="/create">🌻CREATE🌻</a>`
             ); //templateHTML함수에 title, list
 
         response.writeHead(200);
@@ -201,22 +201,24 @@ exports.update = function(request, response){
                             ${template.authorSelect(authors, topic[0].author_id)}
                         </p>
                         <p>
-                            <input type="submit">
+                            <input type="submit" value="🔥submit🔥">
                         </p>
                     </form>
                     `,
 
-                    `<a href="/create">create</a> <a href="/update?id=${topic[0].id}">update</a>`
+                    `<a href="/create">🌻CREATE🌻</a> <a href="/update?id=${topic[0].id}">💡UPDATE💡</a>`
                 ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
 
                 response.writeHead(200);
                 response.end(html);
             });
             //fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-                        
+            
+            
         });
 
     });
+
 }
 
 //update_process
@@ -237,14 +239,18 @@ exports.update_process = function(request, response){
         
         var post = qs.parse(body); //post에 정보가 입력    
 
+
         //mysql update
         db.query('UPDATE topic SET title=?, description=?, author_id=? WHERE id=?', [post.title, post.description, post.author, post.id], function(error, result){
 
+
             response.writeHead(302, {Location: `/?id=${post.id}`});
             response.end();
+
         })
 
     });
+
 }
 
 //delete_process

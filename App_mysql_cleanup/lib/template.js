@@ -3,7 +3,8 @@
 //모듈 활성화
 
 module.exports = {
-                
+    
+    //home
     HTML: function (title, list, body, control) {
         return `
         <!doctype html>
@@ -13,7 +14,8 @@ module.exports = {
             <meta charset="utf-8">
         </head>
         <body>
-            <h1><a href="/">WEB</a></h1> 
+            <h1><a href="/">🚀Node.js & WEB🚀</a></h1>
+            <a href="/author">🌈Author manage🌈</a> 
     
             ${list}
             ${control}
@@ -23,7 +25,8 @@ module.exports = {
         </html>
         `;
     },
-        
+    
+    //List
     List : function (topics){ //filelist -> topics
         var list = '<ul>';
         //파일 목록 만들기
@@ -39,6 +42,7 @@ module.exports = {
         return list;
     },
 
+    //authorSelect
     authorSelect : function(authors, author_id){
         
         var tag = '';
@@ -60,6 +64,29 @@ module.exports = {
         ${tag}
     </select>
     `
+
+    },
+
+    //authorTalbe
+    authorTalbe : function(authors){
+
+        var tag = '<table>';
+        //authors 변수의 원소만큼 반복문 실행
+        var i = 0;
+        while(i < authors.length){
+
+            tag += `
+                <tr>
+                    <td>${authors[i].name}</td>
+                    <td>${authors[i].profile}</td>
+                    <td>💡UPDATE💡</td>
+                    <td>🔥DELETE🔥</td>
+                </tr>
+                ` 
+            i++;
+        }
+        tag += '</table>'
+        return tag;
 
     }
 }
