@@ -243,7 +243,6 @@ exports.update_process = function(request, response){
         //mysql update
         db.query('UPDATE topic SET title=?, description=?, author_id=? WHERE id=?', [post.title, post.description, post.author, post.id], function(error, result){
 
-
             response.writeHead(302, {Location: `/?id=${post.id}`});
             response.end();
 
