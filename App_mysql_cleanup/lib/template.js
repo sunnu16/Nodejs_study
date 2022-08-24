@@ -79,7 +79,7 @@ module.exports = {
                 <tr>
                     <td>${authors[i].name}</td>
                     <td>${authors[i].profile}</td>
-                    <td>💡UPDATE💡</td>
+                    <td><a href="/author/update?id=${authors[i].id}">💡UPDATE💡</td>
                     <td>🔥DELETE🔥</td>
                 </tr>
                 ` 

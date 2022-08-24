@@ -70,8 +70,23 @@ var app = http.createServer(function(request,response){
     } else if(pathname === '/author'){
 
       author.home(request, response);
+     
+    /* //author/create_process */ 
+    } else if(pathname === '/author/create_process'){
 
-    } else {
+      author.create_process(request, response);
+
+    /* /author/update */
+    }else if(pathname === '/author/update'){
+
+      author.update(request, response);
+
+    /* /author/update_process */
+    }else if(pathname === '/author/update_process'){
+
+      author.update_process(request, response);
+
+    }else {
 
       response.writeHead(404);
       response.end('Not found');
