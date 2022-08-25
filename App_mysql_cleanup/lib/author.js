@@ -167,7 +167,7 @@ exports.update = function(request, response){
             var _url = request.url;
             var queryData = url.parse(_url, true).query;
 
-            db.query(`SELECT * FROM author WHERE id =?`,[queryData.id], function(error3,author){
+            db.query(`SELECT * FROM author WHERE id =?`, [queryData.id], function(error3,author){
                 
                 var title = '🌈Author🌈';
                 var list = template.List(topics); //topics 함수 불러오기
@@ -214,7 +214,7 @@ exports.update = function(request, response){
 
                     <form action="/author/update_process" method="post">
                         <p>
-                            <input type="hidden" name"id" value"${queryData.id}"
+                            <input type="hidden" name="id" value="${queryData.id}"
                         </p>
                         <p>
                             <input type="text" name="name" value="${author[0].name}" placeholder="name">
@@ -226,8 +226,8 @@ exports.update = function(request, response){
                             <input type="submit" value="💡UPDATE💡">
                         </p>
                     </form>            
-                    `,            
-                    ``                
+                    `,
+                    ``            
 
                 );
                 response.writeHead(200);
