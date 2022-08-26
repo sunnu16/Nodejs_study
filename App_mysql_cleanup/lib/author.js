@@ -278,3 +278,38 @@ exports.update_process = function(request, response){
 
     });
 }
+
+/* delte_process */
+exports.delete_process = function(request, response){
+
+    var body = '';
+
+    //request.on을 사용하여 data 수신할때마다 function(data){}를 호출
+    request.on('data', function(data){  
+
+        body = body + data;
+        /*body에다 callback이 실행될 때마다 data를 추가
+        (+전송된 data의 크기가 너무 클때, 
+        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)*/
+
+    });
+
+    //data 수신이 끝났을때
+    request.on('end', function(){
+            
+        var post = qs.parse(body);
+
+        db.query(`DELETE FROM author WHERE id=?`, [post.id],            
+            function(error, result){
+                                                
+                if(error){
+                    throw error;
+                }
+                response.writeHead(302, {Location: `/author`});
+                response.end();
+
+            }
+        );
+
+    });
+}

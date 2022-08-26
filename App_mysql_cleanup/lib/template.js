@@ -80,7 +80,12 @@ module.exports = {
                     <td>${authors[i].name}</td>
                     <td>${authors[i].profile}</td>
                     <td><a href="/author/update?id=${authors[i].id}">💡UPDATE💡</td>
-                    <td>🔥DELETE🔥</td>
+                    <td>
+                        <form action="/author/delete_process" method="post">
+                            <input type="hidden" name="id" value="${authors[i].id}">
+                            <input type="submit" value="🔥DELETE🔥">
+                        <form>
+                    </td>
                 </tr>
                 ` 
             i++;
@@ -91,3 +96,4 @@ module.exports = {
     }
 }
 
+//delete 처리 방식은 링크로 처리x post방식으로 처리하기

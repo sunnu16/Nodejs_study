@@ -4,7 +4,7 @@
       + Mysql join + Create detail view
       + Mysql join + Update detail view
       + Total cleanup
-      + Author 추가 
+      + Author C.R.U.D 추가 
 */
 
 var http = require('http');
@@ -85,6 +85,11 @@ var app = http.createServer(function(request,response){
     } else if(pathname === '/author/update_process'){
 
       author.update_process(request, response);
+
+    /* /author/delete_process */
+    } else if(pathname === '/author/delete_process'){
+
+      author.delete_process(request, response);
 
     } else {
 
