@@ -84,7 +84,7 @@ module.exports = {
                         <form action="/author/delete_process" method="post">
                             <input type="hidden" name="id" value="${authors[i].id}">
                             <input type="submit" value="🔥DELETE🔥">
-                        <form>
+                        </form>
                     </td>
                 </tr>
                 ` 

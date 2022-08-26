@@ -299,7 +299,7 @@ exports.delete_process = function(request, response){
             
         var post = qs.parse(body);
 
-        db.query(`DELETE FROM author WHERE id=?`, [post.id],            
+        db.query('DELETE FROM author WHERE id=?', [post.id],            
             function(error, result){
                                                 
                 if(error){
