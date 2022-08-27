@@ -9,6 +9,9 @@ var url = require('url');
 //querystring 모듈 추가
 var qs = require('querystring'); 
 
+//npm sanitize-html 추가
+var sanitizeHtml = require('sanitize-html');
+
 //다수의 api 제공할땐 exports, 하나만 제공할땐 module.exports
 
 //home
@@ -61,9 +64,9 @@ exports.page = function(request, response){
             var list = template.List(topics); //topics 함수 불러오기
             var html = template.HTML(title, list,
                 
-                `<h2>${title}</h2>
-                ${description} 
-                <p>by ${topic[0].name}</p>
+                `<h2>${sanitizeHtml(title)}</h2>
+                ${sanitizeHtml(description)} 
+                <p>by ${sanitizeHtml(topic[0].name)}</p>
                 `,
                 ` <a href="/create">🌻CREATE🌻</a><br><br>
                     <a href="/update?id=${queryData.id}">💡UPDATE💡</a><br><br>
@@ -90,7 +93,7 @@ exports.create = function(request, response){
                   
             var title = 'Create';
             var list = template.List(topics); //topics 함수 불러오기
-            var html = template.HTML(title, list, //template.js author 불러오기
+            var html = template.HTML(sanitizeHtml(title), list, //template.js author 불러오기
                 `
                 <form action="/create_process" method="post">
                 <p><input type="text" name="title" placeholder="title"></p>
@@ -184,7 +187,7 @@ exports.update = function(request, response){
                 //tmeplateList function 적용  
                 var list = template.List(topics);
                 //templateHTML function 적용
-                var html = template.HTML(topic[0].title, list,            
+                var html = template.HTML(sanitizeHtml(topic[0].title), list,            
                     `
                     <form action="/update_process" method="post">
                     <!--서버에 데이터를 생성 수정 삭제시 -> post,get,update method를 사용-->
@@ -192,10 +195,10 @@ exports.update = function(request, response){
                         <input type="hidden" name="id" value="${topic[0].id}">
                         <!--제출(submit) 작동시, 사용자가 수정하는 정보의 파일과 수정되는 파일을 구분-->
                     
-                        <p><input type="text" name="title" placeholder="title" value="${topic[0].title}"></p>
+                        <p><input type="text" name="title" placeholder="title" value="${sanitizeHtml(topic[0].title)}"></p>
                         <!--input 태그의 value을 이용하여 기본값 설정-->
                         <p>
-                            <textarea name="description" placeholder="description">${topic[0].description}</textarea>
+                            <textarea name="description" placeholder="description">${sanitizeHtml(topic[0].description)}</textarea>
                         </p>
                         <p>
                             ${template.authorSelect(authors, topic[0].author_id)}
@@ -272,8 +275,7 @@ exports.delete_process = function(request, response){
         db.query('DELETE FROM topic WHERE id =?',[post.id], function(error, result){
 
             if(error){
-
-            throw error;
+                throw error;
             }
             response.writeHead(302, {Location: `/`});
             response.end();

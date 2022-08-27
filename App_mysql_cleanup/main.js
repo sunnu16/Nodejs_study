@@ -4,7 +4,8 @@
       + Mysql join + Create detail view
       + Mysql join + Update detail view
       + Total cleanup
-      + Author C.R.U.D 추가 
+      + Author 추가
+      + security add sanitizeHtml 
 */
 
 var http = require('http');

@@ -2,6 +2,9 @@
 
 //모듈 활성화
 
+//npm sanitize-html 추가
+var sanitizeHtml = require('sanitize-html');
+
 module.exports = {
     
     //home
@@ -34,7 +37,7 @@ module.exports = {
         var i = 0;
         while(i < topics.length){
             //list의 값에다가 topics 추가
-            list = list + `<li><a href="/?id=${topics[i].id}">${topics[i].title}</a></li>`; //mysql topic table의 id와 title 불러오기
+            list = list + `<li><a href="/?id=${topics[i].id}">${sanitizeHtml(topics[i].title)}</a></li>`; //mysql topic table의 id와 title 불러오기
             i = i + 1;
         }
         list = list + `</ul>`;
@@ -56,7 +59,7 @@ module.exports = {
 
             }
 
-            tag = tag + `<option value = "${authors[i].id}"${selected}>${authors[i].name}</option>`;
+            tag = tag + `<option value = "${authors[i].id}"${selected}>${sanitizeHtml(authors[i].name)}</option>`;
             i++;
     }
     return `
@@ -77,8 +80,8 @@ module.exports = {
 
             tag += `
                 <tr>
-                    <td>${authors[i].name}</td>
-                    <td>${authors[i].profile}</td>
+                    <td>${sanitizeHtml(authors[i].name)}</td>
+                    <td>${sanitizeHtml(authors[i].profile)}</td>
                     <td><a href="/author/update?id=${authors[i].id}">💡UPDATE💡</td>
                     <td>
                         <form action="/author/delete_process" method="post">

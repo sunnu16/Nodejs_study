@@ -9,6 +9,9 @@ var url = require('url');
 //querystring 모듈 추가
 var qs = require('querystring');
 
+//npm sanitize-html 추가
+var sanitizeHtml = require('sanitize-html');
+
 
 exports.home = function(request, response){
     
@@ -217,10 +220,10 @@ exports.update = function(request, response){
                             <input type="hidden" name="id" value="${queryData.id}"
                         </p>
                         <p>
-                            <input type="text" name="name" value="${author[0].name}" placeholder="name">
+                            <input type="text" name="name" value="${sanitizeHtml(author[0].name)}" placeholder="name">
                         </p>
                         <p>
-                            <textarea name="profile" placeholder="description">${author[0].profile}</textarea>
+                            <textarea name="profile" placeholder="description">${sanitizeHtml(author[0].profile)}</textarea>
                         </p>
                         <p>
                             <input type="submit" value="💡UPDATE💡">
@@ -278,6 +281,7 @@ exports.update_process = function(request, response){
 
     });
 }
+
 
 /* delte_process */
 exports.delete_process = function(request, response){
