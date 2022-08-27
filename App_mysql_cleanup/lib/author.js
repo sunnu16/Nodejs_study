@@ -299,17 +299,33 @@ exports.delete_process = function(request, response){
             
         var post = qs.parse(body);
 
-        db.query('DELETE FROM author WHERE id=?', [post.id],            
-            function(error, result){
-                                                
-                if(error){
-                    throw error;
+        //author 삭제시, topic도 같이 삭제가 되도록 추가
+        db.query(
+            `DELETE FROM topic WHERE author_id=?`,
+            [post.id],
+            function(error1, result){
+
+                if(error1){
+                    throw error1
                 }
-                response.writeHead(302, {Location: `/author`});
-                response.end();
+
+                // 문제점 : author만 선택하여 삭제시, author와 관련된 topic이 하나가 아니라면?
+                db.query(
+                    'DELETE FROM author WHERE id=?', 
+                    [post.id], 
+                    function(error2, result2){
+                                                                        
+                        if(error2){
+
+                            throw error2;
+                        }
+                        response.writeHead(302, {Location: `/author`});
+                        response.end();
+
+                    }
+                );
 
             }
         );
-
     });
 }
