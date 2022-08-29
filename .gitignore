@@ -249,5 +249,6 @@ $RECYCLE.BIN/
 
 #custom
 App_mysql_cleanup/lib/db.js
+App_express/lib/db.js
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,visualstudiocode,node,ssh,vim,git
