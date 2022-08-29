@@ -11,9 +11,27 @@
 const express = require('express')
 const app = express()
  
-app.get('/', (req, res) => res.send('Hello Express!'))
- 
-app.listen(5000, () => console.log('Example app listening on port 5000!'))
+//route, routing
+
+// app.get('/', (req, res) => res.send('Hello Express!'))
+app.get('/', function(req, res){
+
+  res.send('Hello Express!')
+
+});
+
+app.get('/page', function(req, res){
+
+  res.send('/page <- page path')
+
+});
+
+//app.listen(5000, () => console.log('Example app listening on port 5000!'))
+app.listen(5000, function(){
+
+  console.log('Example app listening on port 5000!')
+
+});
 
 
 /*
