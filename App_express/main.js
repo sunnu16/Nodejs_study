@@ -6,23 +6,40 @@
       + Express
 */
 
-//Express add
 
+//express 모듈 추가 - const(상수)를 사용하여 재할당 불가능 = 고정
 const express = require('express')
 const app = express()
+var fs = require('fs');
+var template = require('./lib/template.js');
  
-//route, routing
+//route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
 
+// Home
 // app.get('/', (req, res) => res.send('Hello Express!'))
-app.get('/', function(req, res){
+app.get('/', function(request, response){
 
-  res.send('Hello Express!')
+  fs.readdir('./data', function(error, filelist){
+    
+    var title = 'Welcome';
+    var description = 'Hello, Node.js & Express - HOME (Web 클릭시 내용 표시)';
+    var list = template.List(filelist); //topics 함수 불러오기
+    var html = template.HTML(title, list,
+
+      `<h2>${title}</h2>${description}`,
+      `<a href="/create">🌻CREATE🌻</a>`
+      //templateHTML함수에 title, list
+
+    );
+    
+    response.send(html); // writeHead(200)+ end(html)
+  });
 
 });
 
 app.get('/page', function(req, res){
 
-  res.send('/page <- page path')
+  return res.send('/page <- page path')
 
 });
 
@@ -57,7 +74,7 @@ var app = http.createServer(function(request,response){
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
 
-    //home + path가 없는 경로로 접속한다면~
+    // home + path가 없는 경로로 접속한다면~
     if(pathname === '/'){
       if(queryData.id === undefined){
         
@@ -74,17 +91,17 @@ var app = http.createServer(function(request,response){
 
       topic.create(request, response);    
 
-    //create_process 받기  
+    // create_process 받기  
     } else if(pathname === '/create_process'){
 
       topic.create_process(request, response);
 
-    //update 엔드포인트
+    // update 엔드포인트
     } else if(pathname === '/update'){
 
       topic.update(request, response);
 
-    //update_process를 받을  
+    // update_process를 받을  
     } else if(pathname === '/update_process'){
 
       topic.update_process(request, response);     
@@ -94,12 +111,12 @@ var app = http.createServer(function(request,response){
 
       topic.delete_process(request, response);
     
-    //author pathname
+    // author pathname
     } else if(pathname === '/author'){
 
       author.home(request, response);
      
-    // //author/create_process 
+    // /author/create_process 
     } else if(pathname === '/author/create_process'){
 
       author.create_process(request, response);

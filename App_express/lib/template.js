@@ -28,7 +28,50 @@ module.exports = {
         </html>
         `;
     },
+   
+    //List
+    List : function (filelist){ 
+        var list = '<ul>';
+        //파일 목록 만들기
+        //topics 배열을 이용한 반복 적용
+        var i = 0;
+        while(i < filelist.length){
+            //list의 값에다가 topics 추가
+            list = list + `<li><a href="/?id=${filelist[i]}">${sanitizeHtml(filelist[i])}</a></li>`; 
+            i = i + 1;
+        }
+        list = list + `</ul>`;
+        
+        return list;
+    }
+}
+
+
+/*
+module.exports = {
     
+    //home
+    HTML: function (title, list, body, control) {
+        return `
+        <!doctype html>
+        <html>
+        <head>
+            <title>🦄Node.js & WEB🚀 💨 ${title}</title>
+            <meta charset="utf-8">
+        </head>
+        <body>
+            <h1><a href="/">🚀Node.js & WEB🚀</a></h1>
+            <a href="/author">🌈Author manage🌈</a> 
+    
+            ${list}
+            ${control}
+            ${body}
+    
+        </body>
+        </html>
+        `;
+    },
+   
     //List
     List : function (topics){ //filelist -> topics
         var list = '<ul>';
@@ -45,6 +88,7 @@ module.exports = {
         return list;
     },
 
+    
     //authorSelect
     authorSelect : function(authors, author_id){
         
@@ -97,6 +141,9 @@ module.exports = {
         return tag;
 
     }
+
+    
 }
+*/
 
 //delete 처리 방식은 링크로 처리x post방식으로 처리하기
