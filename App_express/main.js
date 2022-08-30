@@ -8,14 +8,21 @@
 
 
 //express 모듈 추가 - const(상수)를 사용하여 재할당 불가능 = 고정
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+
 var fs = require('fs');
+var path = require('path');
+var sanitizeHtml = require('sanitize-Html');
 var template = require('./lib/template.js');
+
  
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
 
+
+
 // Home
+
 // app.get('/', (req, res) => res.send('Hello Express!'))
 app.get('/', function(request, response){
 
@@ -37,11 +44,42 @@ app.get('/', function(request, response){
 
 });
 
-app.get('/page', function(req, res){
 
-  return res.send('/page <- page path')
+// page detail view
+app.get('/page/:pageId', function(request, response){
 
+  fs.readdir('./data', function(error, filelist){
+
+    var filteredId = path.parse(request.params.pageId).base;
+    fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
+
+      var title = request.params.pageId; //db topic id값의 title
+      var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
+      var sanitizeDescription = sanitizeHtml(description, {
+
+        allowedTags:['h1']
+      });
+
+      var list = template.List(filelist); //topics 함수 불러오기
+      var html = template.HTML(sanitizeTitle, list,
+          
+        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+        ` <a href="/create">🌻CREATE🌻</a><br><br>
+            <a href="/update?id=${sanitizeTitle}">💡UPDATE💡</a><br><br>
+            <form action="delete_process" method="post">
+                <input type="hidden" name="id" value="${sanitizeTitle}">
+                <input type="submit" value="🔥delete🔥">
+            </form>`
+
+      ); //templateHTML함수에 title, list
+      response.send(html);
+
+    });
+  });
 });
+
+//response.send(request.params);  app.get('/page/:pageId' -> {"pageId":"HTML(data)"} 표현
+
 
 //app.listen(5000, () => console.log('Example app listening on port 5000!'))
 app.listen(5000, function(){

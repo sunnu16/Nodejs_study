@@ -1,5 +1,7 @@
 //topic.js
 
+/*
+
 //template 모듈 추가로 변환
 var template = require('./template.js');
 //mysql db 연동
@@ -128,9 +130,9 @@ exports.create_process = function(request, response){
     request.on('data', function(data){  
 
         body = body + data;
-        /*body에다 callback이 실행될 때마다 data를 추가
+        body에다 callback이 실행될 때마다 data를 추가
         (+전송된 data의 크기가 너무 클때, 
-        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)*/
+        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)
 
     });
 
@@ -231,9 +233,9 @@ exports.update_process = function(request, response){
     request.on('data', function(data){
 
         body = body + data;
-        /*body에다 callback이 실행될 때마다 data를 추가
+        body에다 callback이 실행될 때마다 data를 추가
         (+전송된 data의 크기가 너무 클때, 
-        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)*/
+        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)
 
     });
 
@@ -261,9 +263,9 @@ exports.delete_process = function(request, response){
     request.on('data', function(data){
     
         body = body + data;
-        /*body에다 callback이 실행될 때마다 data를 추가
+        body에다 callback이 실행될 때마다 data를 추가
         (+전송된 data의 크기가 너무 클때, 
-        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)*/
+        접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)
     });
 
     //data 수신이 끝났을때
@@ -284,6 +286,9 @@ exports.delete_process = function(request, response){
 
     });
 }
+
+
+*/
 
 //console.log(queryData.id); -> querystring에 따라 다른 정보를 출력 / 확인
 

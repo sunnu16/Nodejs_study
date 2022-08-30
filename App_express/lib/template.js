@@ -2,8 +2,6 @@
 
 //모듈 활성화
 
-//npm sanitize-html 추가
-var sanitizeHtml = require('sanitize-html');
 
 module.exports = {
     
@@ -18,8 +16,7 @@ module.exports = {
         </head>
         <body>
             <h1><a href="/">🚀Node.js & WEB🚀</a></h1>
-            <a href="/author">🌈Author manage🌈</a> 
-    
+                
             ${list}
             ${control}
             ${body}
@@ -37,7 +34,7 @@ module.exports = {
         var i = 0;
         while(i < filelist.length){
             //list의 값에다가 topics 추가
-            list = list + `<li><a href="/?id=${filelist[i]}">${sanitizeHtml(filelist[i])}</a></li>`; 
+            list = list + `<li><a href="/page/${filelist[i]}">${filelist[i]}</a></li>`; 
             i = i + 1;
         }
         list = list + `</ul>`;
@@ -48,6 +45,11 @@ module.exports = {
 
 
 /*
+
+//npm sanitize-html 추가
+var sanitizeHtml = require('sanitize-html');
+
+
 module.exports = {
     
     //home
