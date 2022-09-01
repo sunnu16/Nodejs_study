@@ -13,7 +13,7 @@ const app = express();
 
 var fs = require('fs');
 var path = require('path');
-var sanitizeHtml = require('sanitize-Html');
+var sanitizeHtml = require('sanitize-html');
 var template = require('./lib/template.js');
 
  
