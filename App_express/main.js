@@ -13,6 +13,7 @@ const app = express();
 
 var fs = require('fs');
 var path = require('path');
+var qs = require('querystring');
 var sanitizeHtml = require('sanitize-html');
 var template = require('./lib/template.js');
 
@@ -79,6 +80,64 @@ app.get('/page/:pageId', function(request, response){
 });
 
 //response.send(request.params);  app.get('/page/:pageId' -> {"pageId":"HTML(data)"} 표현
+
+// /create
+app.get('/create', function(request, response){
+  fs.readdir('./data', function(error, filelist){
+                  
+    var title = 'Create';
+    var list = template.List(filelist); //topics 함수 불러오기
+    var html = template.HTML(title, list, //template.js author 불러오기
+      `
+      <form action="/create_process" method="post">
+        <p><input type="text" name="title" placeholder="title"></p>
+        <p>
+          <textarea name="description" placeholder="description"></textarea>
+        </p>
+        <p>
+          <input type="submit" value="🔥submit🔥">
+        </p>
+      </form>
+      `,
+      `<a href="/create">🌻CREATE🌻</a>`
+    );
+
+    response.send(html);
+  });
+
+});
+
+// /create_process
+app.post('/create_process', function(request, response){
+  
+  var body = '';
+
+  //request.on을 사용하여 data 수신할때마다 function(data){}를 호출
+  request.on('data', function(data){  
+
+      body = body + data;
+      /* body에다 callback이 실행될 때마다 data를 추가
+      (+전송된 data의 크기가 너무 클때, 
+      접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) */
+
+  });
+
+  //data 수신이 끝났을때
+  request.on('end', function(){
+              
+    var post = qs.parse(body);
+    var title = post.title;
+    var description = post.description;
+
+    fs.writeFile(`data/${title}`, description, 'utf8', function(error){
+      response.writeHead(302, {Location: `/?id=${title}`});
+      response.end();
+
+    })     
+
+  });
+
+});
 
 
 //app.listen(5000, () => console.log('Example app listening on port 5000!'))
