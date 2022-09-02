@@ -3,7 +3,7 @@
       + Total cleanup
       + Author C.R.U.D추가
       + security add sanitizeHtml 
-      + Express
+      + Express 
 */
 
 
@@ -66,7 +66,7 @@ app.get('/page/:pageId', function(request, response){
           
         `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
         ` <a href="/create">🌻CREATE🌻</a><br><br>
-            <a href="/update?id=${sanitizeTitle}">💡UPDATE💡</a><br><br>
+            <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
             <form action="delete_process" method="post">
                 <input type="hidden" name="id" value="${sanitizeTitle}">
                 <input type="submit" value="🔥delete🔥">
@@ -138,6 +138,85 @@ app.post('/create_process', function(request, response){
   });
 
 });
+
+// /update
+app.get('/update/:pageId', function(request, response){
+
+  fs.readdir('./data', function(error, filelist){
+
+    var filteredId = path.parse(request.params.pageId).base;
+    fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
+            
+      var title = request.params.pageId;
+      //tmeplateList function 적용
+      var list = template.List(filelist); //topics 함수 불러오기
+      var html = template.HTML(title, list,
+        `
+        <form action="/update_process" method="post">
+        <!--서버에 데이터를 생성 수정 삭제시 -> post,get,update method를 사용-->
+
+          <input type="hidden" name="id" value="${title}">
+          <!--제출(submit) 작동시, 사용자가 수정하는 정보의 파일과 수정되는 파일을 구분-->
+        
+          <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+          <!--input 태그의 value을 이용하여 기본값 설정-->
+          <p>
+            <textarea name="description" placeholder="description">${description}</textarea>
+          </p>
+          <p>
+            <input type="submit" value="🔥submit🔥">
+          </p>
+        </form>
+        `,
+
+        `<a href="/create">🌻CREATE🌻</a> <a href="/update?id=${title}">💡UPDATE💡</a>`
+      ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
+
+      response.send(html);
+
+    });
+  });
+});
+
+// /update_process
+app.post('/update_process', function(request, response){
+
+  var body = '';
+  request.on('data', function(data){
+    
+    body = body + data;
+    /* body에다 callback이 실행될 때마다 data를 추가
+    (+전송된 data의 크기가 너무 클때, 
+    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) */
+
+  });
+
+  //data 수신이 끝났을때
+  request.on('end', function(){
+        
+    var post = qs.parse(body); //post에 정보가 입력
+    var id = post.id;
+    var title = post.title;
+    var description = post.description;
+    fs.rename(`data/${id}`, `data/${title}`, function(error){
+
+      fs.writeFile(`data/${title}`, description, 'utf8', function(error){
+        
+        response.writeHead(302, {Location: `/?id=${title}`});
+        response.end();
+
+      });     
+
+    });  
+          
+  });
+
+});
+
+
+
+
+
 
 
 //app.listen(5000, () => console.log('Example app listening on port 5000!'))
