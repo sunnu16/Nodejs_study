@@ -1,9 +1,5 @@
-/*App - Mysql add
-      + Mysql C.R.U.D view 구현 + Mysql join
-      + Total cleanup
-      + Author C.R.U.D추가
-      + security add sanitizeHtml 
-      + Express 
+/*
+  App - Express convert
 */
 
 
@@ -67,7 +63,7 @@ app.get('/page/:pageId', function(request, response){
         `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
         ` <a href="/create">🌻CREATE🌻</a><br><br>
             <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
-            <form action="delete_process" method="post">
+            <form action="/delete_process" method="post">
                 <input type="hidden" name="id" value="${sanitizeTitle}">
                 <input type="submit" value="🔥delete🔥">
             </form>`
@@ -107,6 +103,7 @@ app.get('/create', function(request, response){
 
 });
 
+
 // /create_process
 app.post('/create_process', function(request, response){
   
@@ -138,6 +135,7 @@ app.post('/create_process', function(request, response){
   });
 
 });
+
 
 // /update
 app.get('/update/:pageId', function(request, response){
@@ -175,8 +173,11 @@ app.get('/update/:pageId', function(request, response){
       response.send(html);
 
     });
+
   });
+  
 });
+
 
 // /update_process
 app.post('/update_process', function(request, response){
@@ -202,21 +203,52 @@ app.post('/update_process', function(request, response){
 
       fs.writeFile(`data/${title}`, description, 'utf8', function(error){
         
-        response.writeHead(302, {Location: `/?id=${title}`});
-        response.end();
+
+        /* response.writeHead(302, {Location: `/?id=${title}`});
+        response.end(); */
+
+        //express redirect
+        response.redirect(`/?id=${title}`);
 
       });     
 
     });  
-          
+
   });
 
 });
 
 
+// /delete
+app.post('/delete_process', function(request, response){
+  var body = '';
+  request.on('data', function(data){
 
+    body = body + data;
+    /* body에다 callback이 실행될 때마다 data를 추가
+    (+전송된 data의 크기가 너무 클때, 
+    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) */
+  });
 
+  //data 수신이 끝났을때
+  request.on('end', function(){
 
+    var post = qs.parse(body); //post에 정보가 입력
+    var id = post.id;
+    var filteredId = path.parse(id).base;
+    fs.unlink(`data/${filteredId}`, function(error){
+      
+      /* response.writeHead(302, {Location: `/`});
+      response.end(); */
+
+      //express redirect
+      response.redirect('/');
+
+    })       
+
+  });
+
+});
 
 
 //app.listen(5000, () => console.log('Example app listening on port 5000!'))
