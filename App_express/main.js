@@ -1,5 +1,6 @@
 /*
   App - Express convert
+      - Express midleWare
 */
 
 
@@ -11,8 +12,12 @@ var fs = require('fs');
 var path = require('path');
 var qs = require('querystring');
 var sanitizeHtml = require('sanitize-html');
+var bodyParser = require('body-parser');
 var template = require('./lib/template.js');
 
+//bodyParser middleware 추가 
+app.use(bodyParser.urlencoded({extended : false}));
+//bodyparser가 만들어내는 middleware를 표현하는 식 - 요청할때마다 middleware가 실행
  
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
 
@@ -107,15 +112,16 @@ app.get('/create', function(request, response){
 // /create_process
 app.post('/create_process', function(request, response){
   
+  /*
   var body = '';
 
   //request.on을 사용하여 data 수신할때마다 function(data){}를 호출
   request.on('data', function(data){  
 
       body = body + data;
-      /* body에다 callback이 실행될 때마다 data를 추가
+       body에다 callback이 실행될 때마다 data를 추가
       (+전송된 data의 크기가 너무 클때, 
-      접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) */
+      접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지)
 
   });
 
@@ -133,6 +139,19 @@ app.post('/create_process', function(request, response){
     })     
 
   });
+
+  */
+  //request.body
+  var post = request.body;
+  var title = post.title;
+  var description = post.description;
+
+  fs.writeFile(`data/${title}`, description, 'utf8', function(error){
+
+    response.writeHead(302, {Location: `/?id=${title}`});
+    response.end();
+
+  })
 
 });
 
@@ -182,13 +201,14 @@ app.get('/update/:pageId', function(request, response){
 // /update_process
 app.post('/update_process', function(request, response){
 
+  /*
   var body = '';
   request.on('data', function(data){
     
     body = body + data;
-    /* body에다 callback이 실행될 때마다 data를 추가
+     body에다 callback이 실행될 때마다 data를 추가
     (+전송된 data의 크기가 너무 클때, 
-    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) */
+    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) 
 
   });
 
@@ -204,8 +224,8 @@ app.post('/update_process', function(request, response){
       fs.writeFile(`data/${title}`, description, 'utf8', function(error){
         
 
-        /* response.writeHead(302, {Location: `/?id=${title}`});
-        response.end(); */
+        //response.writeHead(302, {Location: `/?id=${title}`});
+        //response.end(); 
 
         //express redirect
         response.redirect(`/?id=${title}`);
@@ -216,18 +236,37 @@ app.post('/update_process', function(request, response){
 
   });
 
+  */
+
+  var post = request.body; //post에 정보가 입력
+  var id = post.id;
+  var title = post.title;
+  var description = post.description;
+  fs.rename(`data/${id}`, `data/${title}`, function(error){
+      
+    fs.writeFile(`data/${title}`, description, 'utf8', function(error){
+                
+      //express redirect
+      response.redirect(`/?id=${title}`);
+
+    });
+
+  });
+
 });
 
 
 // /delete
 app.post('/delete_process', function(request, response){
+
+  /*
   var body = '';
   request.on('data', function(data){
 
     body = body + data;
-    /* body에다 callback이 실행될 때마다 data를 추가
+    body에다 callback이 실행될 때마다 data를 추가
     (+전송된 data의 크기가 너무 클때, 
-    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) */
+    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) 
   });
 
   //data 수신이 끝났을때
@@ -238,14 +277,24 @@ app.post('/delete_process', function(request, response){
     var filteredId = path.parse(id).base;
     fs.unlink(`data/${filteredId}`, function(error){
       
-      /* response.writeHead(302, {Location: `/`});
-      response.end(); */
+      //response.writeHead(302, {Location: `/`});
+      //response.end();
 
       //express redirect
       response.redirect('/');
 
     })       
 
+  });
+
+  */
+  var post = request.body;
+  var id = post.id;
+  var filteredId = path.parse(id).base;
+  fs.unlink(`data/${filteredId}`, function(error){
+    
+    //express redirect
+    response.redirect('/');
   });
 
 });
