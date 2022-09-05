@@ -13,12 +13,20 @@ var path = require('path');
 var qs = require('querystring');
 var sanitizeHtml = require('sanitize-html');
 var bodyParser = require('body-parser');
+var compression = require('compression');
 var template = require('./lib/template.js');
 
 //bodyParser middleware 추가 
 app.use(bodyParser.urlencoded({extended : false}));
 //bodyparser가 만들어내는 middleware를 표현하는 식 - 요청할때마다 middleware가 실행
- 
+/* 데이터를 내가 원하는 형태의 데이터로 ‘가공'하는 과정을 parsing.
+   그 과정을 수행하는 모듈 혹은 메소드를 parser 라한다.*/
+/* 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 */
+
+//compression middleware - 데이터 용량을 압축(gzip)하여 전송하고 압축을 풀어 실행
+app.use(compression());
+
+
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
 
 
