@@ -19,12 +19,25 @@ var template = require('./lib/template.js');
 //bodyParser middleware 추가 
 app.use(bodyParser.urlencoded({extended : false}));
 //bodyparser가 만들어내는 middleware를 표현하는 식 - 요청할때마다 middleware가 실행
-/* 데이터를 내가 원하는 형태의 데이터로 ‘가공'하는 과정을 parsing.
-   그 과정을 수행하는 모듈 혹은 메소드를 parser 라한다.*/
-/* 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 */
+/* - 데이터를 내가 원하는 형태의 데이터로 ‘가공'하는 과정을 parsing.
+     그 과정을 수행하는 모듈 혹은 메소드를 parser 라한다.
+   - 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 */
 
 //compression middleware - 데이터 용량을 압축(gzip)하여 전송하고 압축을 풀어 실행
 app.use(compression());
+
+
+//make middleware - fs.readdir('./data', function(error, filelist){}); 공통된 부분
+app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (여기서는 get 방식의 모든요청)
+
+  fs.readdir('./data', function(error, filelist){
+    
+    request.list = filelist;
+    next();
+
+  });
+
+});
 
 
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
@@ -35,84 +48,78 @@ app.use(compression());
 
 // app.get('/', (req, res) => res.send('Hello Express!'))
 app.get('/', function(request, response){
+     
+  var title = 'Welcome';
+  var description = 'Hello, Node.js & Express - HOME (Web 클릭시 내용 표시)';
+  var list = template.List(request.list); //topics 함수 불러오기
+  var html = template.HTML(title, list,
 
-  fs.readdir('./data', function(error, filelist){
-    
-    var title = 'Welcome';
-    var description = 'Hello, Node.js & Express - HOME (Web 클릭시 내용 표시)';
-    var list = template.List(filelist); //topics 함수 불러오기
-    var html = template.HTML(title, list,
+    `<h2>${title}</h2>${description}`,
+    `<a href="/create">🌻CREATE🌻</a>`
+    //templateHTML함수에 title, list
 
-      `<h2>${title}</h2>${description}`,
-      `<a href="/create">🌻CREATE🌻</a>`
-      //templateHTML함수에 title, list
-
-    );
-    
-    response.send(html); // writeHead(200)+ end(html)
-  });
-
+  );
+  
+  response.send(html); // writeHead(200)+ end(html)
+  
 });
 
 
 // page detail view
 app.get('/page/:pageId', function(request, response){
+  
+  var filteredId = path.parse(request.params.pageId).base;
+  fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
 
-  fs.readdir('./data', function(error, filelist){
+    var title = request.params.pageId; //db topic id값의 title
+    var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
+    var sanitizeDescription = sanitizeHtml(description, {
 
-    var filteredId = path.parse(request.params.pageId).base;
-    fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
-
-      var title = request.params.pageId; //db topic id값의 title
-      var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
-      var sanitizeDescription = sanitizeHtml(description, {
-
-        allowedTags:['h1']
-      });
-
-      var list = template.List(filelist); //topics 함수 불러오기
-      var html = template.HTML(sanitizeTitle, list,
-          
-        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
-        ` <a href="/create">🌻CREATE🌻</a><br><br>
-            <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
-            <form action="/delete_process" method="post">
-                <input type="hidden" name="id" value="${sanitizeTitle}">
-                <input type="submit" value="🔥delete🔥">
-            </form>`
-
-      ); //templateHTML함수에 title, list
-      response.send(html);
-
+      allowedTags:['h1']
     });
+
+    var list = template.List(request.list); //topics 함수 불러오기
+    var html = template.HTML(sanitizeTitle, list,
+        
+      `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+      ` <a href="/create">🌻CREATE🌻</a><br><br>
+        <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
+        <form action="/delete_process" method="post">
+          <input type="hidden" name="id" value="${sanitizeTitle}">
+          <input type="submit" value="🔥delete🔥">
+        </form>`
+
+    ); //templateHTML함수에 title, list
+    response.send(html);
+
   });
+  
 });
 
 //response.send(request.params);  app.get('/page/:pageId' -> {"pageId":"HTML(data)"} 표현
 
 // /create
-app.get('/create', function(request, response){
-  fs.readdir('./data', function(error, filelist){
+app.get('/create', function(request, response){  
                   
-    var title = 'Create';
-    var list = template.List(filelist); //topics 함수 불러오기
-    var html = template.HTML(title, list, //template.js author 불러오기
-      `
-      <form action="/create_process" method="post">
-        <p><input type="text" name="title" placeholder="title"></p>
-        <p>
-          <textarea name="description" placeholder="description"></textarea>
-        </p>
-        <p>
-          <input type="submit" value="🔥submit🔥">
-        </p>
-      </form>
-      `,
-      `<a href="/create">🌻CREATE🌻</a>`
-    );
+  var title = 'Create';
+  var list = template.List(request.list); //topics 함수 불러오기
+  var html = template.HTML(title, list, //template.js author 불러오기
+    `
+    <form action="/create_process" method="post">
+      <p><input type="text" name="title" placeholder="title"></p>
+      <p>
+        <textarea name="description" placeholder="description"></textarea>
+      </p>
+      <p>
+        <input type="submit" value="🔥submit🔥">
+      </p>
+    </form>
+    `,
+    `<a href="/create">🌻CREATE🌻</a>`
+  );
 
-    response.send(html);
-  });
+  response.send(html);
+ 
 
 });
 
@@ -146,9 +153,8 @@ app.post('/create_process', function(request, response){
 
     })     
 
-  });
+  }); */
 
-  */
   //request.body
   var post = request.body;
   var title = post.title;
@@ -166,40 +172,36 @@ app.post('/create_process', function(request, response){
 
 // /update
 app.get('/update/:pageId', function(request, response){
+  
+  var filteredId = path.parse(request.params.pageId).base;
+  fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
+          
+    var title = request.params.pageId;
+    //tmeplateList function 적용
+    var list = template.List(request.list); //topics 함수 불러오기
+    var html = template.HTML(title, list,
+      `
+      <form action="/update_process" method="post">
+      <!--서버에 데이터를 생성 수정 삭제시 -> post,get,update method를 사용-->
 
-  fs.readdir('./data', function(error, filelist){
+        <input type="hidden" name="id" value="${title}">
+        <!--제출(submit) 작동시, 사용자가 수정하는 정보의 파일과 수정되는 파일을 구분-->
+      
+        <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+        <!--input 태그의 value을 이용하여 기본값 설정-->
+        <p>
+          <textarea name="description" placeholder="description">${description}</textarea>
+        </p>
+        <p>
+          <input type="submit" value="🔥submit🔥">
+        </p>
+      </form>
+      `,
 
-    var filteredId = path.parse(request.params.pageId).base;
-    fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
-            
-      var title = request.params.pageId;
-      //tmeplateList function 적용
-      var list = template.List(filelist); //topics 함수 불러오기
-      var html = template.HTML(title, list,
-        `
-        <form action="/update_process" method="post">
-        <!--서버에 데이터를 생성 수정 삭제시 -> post,get,update method를 사용-->
+      `<a href="/create">🌻CREATE🌻</a> <a href="/update?id=${title}">💡UPDATE💡</a>`
+    ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
 
-          <input type="hidden" name="id" value="${title}">
-          <!--제출(submit) 작동시, 사용자가 수정하는 정보의 파일과 수정되는 파일을 구분-->
-        
-          <p><input type="text" name="title" placeholder="title" value="${title}"></p>
-          <!--input 태그의 value을 이용하여 기본값 설정-->
-          <p>
-            <textarea name="description" placeholder="description">${description}</textarea>
-          </p>
-          <p>
-            <input type="submit" value="🔥submit🔥">
-          </p>
-        </form>
-        `,
-
-        `<a href="/create">🌻CREATE🌻</a> <a href="/update?id=${title}">💡UPDATE💡</a>`
-      ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
-
-      response.send(html);
-
-    });
+    response.send(html);
 
   });
   
