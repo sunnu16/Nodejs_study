@@ -1,6 +1,9 @@
 /*
   App - Express convert
-      - Express midleWare
+      - Express midleWare(bodyParser, compression)
+      - Express custom middleware
+      - Express static files middleware        
+
 */
 
 
@@ -16,12 +19,17 @@ var bodyParser = require('body-parser');
 var compression = require('compression');
 var template = require('./lib/template.js');
 
+//static files
+app.use(express.static('public')); //정적인 파일을 서비스하고 싶을때, 서비스 하고픈 dir을 직접 지정
+
 //bodyParser middleware 추가 
 app.use(bodyParser.urlencoded({extended : false}));
+
 //bodyparser가 만들어내는 middleware를 표현하는 식 - 요청할때마다 middleware가 실행
 /* - 데이터를 내가 원하는 형태의 데이터로 ‘가공'하는 과정을 parsing.
      그 과정을 수행하는 모듈 혹은 메소드를 parser 라한다.
    - 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 */
+
 
 //compression middleware - 데이터 용량을 압축(gzip)하여 전송하고 압축을 풀어 실행
 app.use(compression());
@@ -54,7 +62,10 @@ app.get('/', function(request, response){
   var list = template.List(request.list); //topics 함수 불러오기
   var html = template.HTML(title, list,
 
-    `<h2>${title}</h2>${description}`,
+    `
+    <h2>${title}</h2>${description}
+    <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
+    `,
     `<a href="/create">🌻CREATE🌻</a>`
     //templateHTML함수에 title, list
 
