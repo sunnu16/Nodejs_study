@@ -2,8 +2,8 @@
   App - Express convert
       - Express midleWare(bodyParser, compression)
       - Express custom middleware
-      - Express static files middleware        
-
+      - Express static files middleware 
+      - Error handler
 */
 
 
@@ -77,31 +77,40 @@ app.get('/', function(request, response){
 
 
 // page detail view
-app.get('/page/:pageId', function(request, response){
+app.get('/page/:pageId', function(request, response, next){
   
   var filteredId = path.parse(request.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
 
-    var title = request.params.pageId; //db topic id값의 title
-    var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
-    var sanitizeDescription = sanitizeHtml(description, {
+    //erro handling
+    if(error){
 
-      allowedTags:['h1']
-    });
+      next(error);
 
-    var list = template.List(request.list); //topics 함수 불러오기
-    var html = template.HTML(sanitizeTitle, list,
+    } else{
+      
+      var title = request.params.pageId; //db topic id값의 title
+      var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
+      var sanitizeDescription = sanitizeHtml(description, {
         
-      `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
-      ` <a href="/create">🌻CREATE🌻</a><br><br>
-        <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
-        <form action="/delete_process" method="post">
-          <input type="hidden" name="id" value="${sanitizeTitle}">
-          <input type="submit" value="🔥delete🔥">
-        </form>`
+        allowedTags:['h1']
+      });
 
-    ); //templateHTML함수에 title, list
-    response.send(html);
+      var list = template.List(request.list); //topics 함수 불러오기
+      var html = template.HTML(sanitizeTitle, list,
+          
+        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+        ` <a href="/create">🌻CREATE🌻</a><br><br>
+          <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
+          <form action="/delete_process" method="post">
+            <input type="hidden" name="id" value="${sanitizeTitle}">
+            <input type="submit" value="🔥delete🔥">
+          </form>`
+
+      ); //templateHTML함수에 title, list
+      response.send(html);
+
+    }
 
   });
   
@@ -319,6 +328,27 @@ app.post('/delete_process', function(request, response){
   });
 
 });
+
+
+//error 404
+app.use(function(request, response, next){
+
+  response.status(404).send('sorry cant find!');
+
+});
+
+
+//error 500
+app.use(function(error, request, response, next){
+
+  console.error(error.stack)
+  response.status(500).send('something broke!');
+
+});
+/*
+  앞서 실행된 내용중 에러가 있을 경우(next로 호출되어 인자가 있는 경우),
+  error 500의 미들웨어를 호출 하도록 약속되어있음 
+*/
 
 
 //app.listen(5000, () => console.log('Example app listening on port 5000!'))
