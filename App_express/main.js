@@ -4,6 +4,7 @@
       - Express custom middleware
       - Express static files middleware 
       - Error handler
+      - Express.Router
 */
 
 
@@ -48,9 +49,10 @@ app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (
 });
 
 
+
+
+
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
-
-
 
 // Home
 
@@ -66,7 +68,7 @@ app.get('/', function(request, response){
     <h2>${title}</h2>${description}
     <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
     `,
-    `<a href="/create">🌻CREATE🌻</a>`
+    `<a href="/topic/create">🌻CREATE🌻</a>`
     //templateHTML함수에 title, list
 
   );
@@ -76,56 +78,14 @@ app.get('/', function(request, response){
 });
 
 
-// page detail view
-app.get('/page/:pageId', function(request, response, next){
-  
-  var filteredId = path.parse(request.params.pageId).base;
-  fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
-
-    //erro handling
-    if(error){
-
-      next(error);
-
-    } else{
-      
-      var title = request.params.pageId; //db topic id값의 title
-      var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
-      var sanitizeDescription = sanitizeHtml(description, {
-        
-        allowedTags:['h1']
-      });
-
-      var list = template.List(request.list); //topics 함수 불러오기
-      var html = template.HTML(sanitizeTitle, list,
-          
-        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
-        ` <a href="/create">🌻CREATE🌻</a><br><br>
-          <a href="/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
-          <form action="/delete_process" method="post">
-            <input type="hidden" name="id" value="${sanitizeTitle}">
-            <input type="submit" value="🔥delete🔥">
-          </form>`
-
-      ); //templateHTML함수에 title, list
-      response.send(html);
-
-    }
-
-  });
-  
-});
-
-//response.send(request.params);  app.get('/page/:pageId' -> {"pageId":"HTML(data)"} 표현
-
 // /create
-app.get('/create', function(request, response){  
+app.get('/topic/create', function(request, response){  
                   
   var title = 'Create';
   var list = template.List(request.list); //topics 함수 불러오기
   var html = template.HTML(title, list, //template.js author 불러오기
     `
-    <form action="/create_process" method="post">
+    <form action="/topic/create_process" method="post">
       <p><input type="text" name="title" placeholder="title"></p>
       <p>
         <textarea name="description" placeholder="description"></textarea>
@@ -135,17 +95,16 @@ app.get('/create', function(request, response){
       </p>
     </form>
     `,
-    `<a href="/create">🌻CREATE🌻</a>`
+    `<a href="/topic/create">🌻CREATE🌻</a>`
   );
 
   response.send(html);
- 
 
 });
 
 
 // /create_process
-app.post('/create_process', function(request, response){
+app.post('/topic/create_process', function(request, response){
   
   /*
   var body = '';
@@ -173,7 +132,8 @@ app.post('/create_process', function(request, response){
 
     })     
 
-  }); */
+  }); 
+  */
 
   //request.body
   var post = request.body;
@@ -182,8 +142,9 @@ app.post('/create_process', function(request, response){
 
   fs.writeFile(`data/${title}`, description, 'utf8', function(error){
 
-    response.writeHead(302, {Location: `/?id=${title}`});
-    response.end();
+    //response.writeHead(302, {Location: `/?id=${title}`});
+    //response.end();
+    response.redirect(`/topic/${title}`);
 
   })
 
@@ -191,7 +152,7 @@ app.post('/create_process', function(request, response){
 
 
 // /update
-app.get('/update/:pageId', function(request, response){
+app.get('/topic/update/:pageId', function(request, response){
   
   var filteredId = path.parse(request.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
@@ -201,7 +162,7 @@ app.get('/update/:pageId', function(request, response){
     var list = template.List(request.list); //topics 함수 불러오기
     var html = template.HTML(title, list,
       `
-      <form action="/update_process" method="post">
+      <form action="/topic/update_process" method="post">
       <!--서버에 데이터를 생성 수정 삭제시 -> post,get,update method를 사용-->
 
         <input type="hidden" name="id" value="${title}">
@@ -218,7 +179,7 @@ app.get('/update/:pageId', function(request, response){
       </form>
       `,
 
-      `<a href="/create">🌻CREATE🌻</a> <a href="/update?id=${title}">💡UPDATE💡</a>`
+      `<a href="/topic/create">🌻CREATE🌻</a> <a href="/topic/update/${title}">💡UPDATE💡</a>`
     ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
 
     response.send(html);
@@ -229,7 +190,7 @@ app.get('/update/:pageId', function(request, response){
 
 
 // /update_process
-app.post('/update_process', function(request, response){
+app.post('/topic/update_process', function(request, response){
 
   /*
   var body = '';
@@ -277,7 +238,7 @@ app.post('/update_process', function(request, response){
     fs.writeFile(`data/${title}`, description, 'utf8', function(error){
                 
       //express redirect
-      response.redirect(`/?id=${title}`);
+      response.redirect(`/topic/${title}`);
 
     });
 
@@ -287,7 +248,7 @@ app.post('/update_process', function(request, response){
 
 
 // /delete
-app.post('/delete_process', function(request, response){
+app.post('/topic/delete_process', function(request, response){
 
   /*
   var body = '';
@@ -330,6 +291,49 @@ app.post('/delete_process', function(request, response){
 });
 
 
+// page detail view
+app.get('/topic/:pageId', function(request, response, next){
+  
+  var filteredId = path.parse(request.params.pageId).base;
+  fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
+
+    //erro handling
+    if(error){
+
+      next(error);
+
+    } else{
+      
+      var title = request.params.pageId; //db topic id값의 title
+      var sanitizeTitle = sanitizeHtml(title); //db topic id값의 description
+      var sanitizeDescription = sanitizeHtml(description, {
+        
+        allowedTags:['h1']
+      });
+
+      var list = template.List(request.list); //topics 함수 불러오기
+      var html = template.HTML(sanitizeTitle, list,
+          
+        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+        ` <a href="/topic/create">🌻CREATE🌻</a><br><br>
+          <a href="/topic/update/${sanitizeTitle}">💡UPDATE💡</a><br><br>
+          <form action="/topic/delete_process" method="post">
+            <input type="hidden" name="id" value="${sanitizeTitle}">
+            <input type="submit" value="🔥delete🔥">
+          </form>`
+
+      ); //templateHTML함수에 title, list
+      response.send(html);
+
+    }
+
+  });
+  
+});
+
+//response.send(request.params);  app.get('/page/:pageId' -> {"pageId":"HTML(data)"} 표현
+
+
 //error 404
 app.use(function(request, response, next){
 
@@ -357,6 +361,9 @@ app.listen(5000, function(){
   console.log('Example app listening on port 5000!')
 
 });
+
+
+
 
 
 /*
