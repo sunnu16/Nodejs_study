@@ -1,3 +1,20 @@
+//Express generator - 기본적인 구성을 제공하는 express 생성기
+
+/*
+  npm install express-generator -g
+  express (만들고자하는 app 이름)
+  npm install
+  npm start    or    pm2 start ./bin/www  --watch
+*/
+
+/*
+  bin/www : http 모듈을 통해 서버 관리, 포트 관리   ===>   pm2 start ./bin/www  --watch
+  public : css, image, javascript 등 정적인 파일들을 담는 곳
+  routes : 서버가 라우팅 할 url path에 대한 로직들을 저장해놓는 파일
+  views : 서버가 렌더링하는 템플릿들을 저장해놓는 dir
+  app.js : Middleware 정의, 서버 설정
+*/
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
