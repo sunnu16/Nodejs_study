@@ -5,6 +5,7 @@
       - Express static files middleware 
       - Error handler
       - Express.Router
+      - Express security
 */
 
 
@@ -16,6 +17,9 @@ var qs = require('querystring');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 
+// helmet은 보안 이슈를 해결주는 모듈
+var helmet = require('helmet');
+app.use(helmet());
 
 // indexRouter
 var indexRouter = require('./routes/index');
