@@ -15,10 +15,13 @@ var fs = require('fs');
 var qs = require('querystring');
 var bodyParser = require('body-parser');
 var compression = require('compression');
-var template = require('./lib/template.js');
 
+
+// indexRouter
+var indexRouter = require('./routes/index');
 // topticRouter
 var topicRouter = require('./routes/topic');
+
 
 //static files
 app.use(express.static('public')); //정적인 파일을 서비스하고 싶을때, 서비스 하고픈 dir을 직접 지정
@@ -48,35 +51,15 @@ app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (
 
 });
 
+
+// /index로 시작하는 주소들은 topicRouter라는 middleware을 적용
+app.use('/', indexRouter);
+
 // /topic으로 시작하는 주소들은 topicRouter라는 middleware을 적용
 app.use('/topic', topicRouter);
 
 
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
-
-// Home
-
-// app.get('/', (req, res) => res.send('Hello Express!'))
-app.get('/', function(request, response){
-     
-  var title = 'Welcome';
-  var description = 'Hello, Node.js & Express - HOME (Web 클릭시 내용 표시)';
-  var list = template.List(request.list); //topics 함수 불러오기
-  var html = template.HTML(title, list,
-
-    `
-    <h2>${title}</h2>${description}
-    <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
-    `,
-    `<a href="/topic/create">🌻CREATE🌻</a>`
-    //templateHTML함수에 title, list
-
-  );
-  
-  response.send(html); // writeHead(200)+ end(html)
-  
-});
-
 
 
 //error 404
