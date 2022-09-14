@@ -1,4 +1,4 @@
-# Nodejs_study
+# Node.js_study
 
 <p align="center">
  <br/>
