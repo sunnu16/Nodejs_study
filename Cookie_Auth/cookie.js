@@ -2,7 +2,7 @@
 
 
 /*
-    @쿠키의 목적@
+    *쿠키의 목적*
     - 세션 관리(Session management)
       서버에 저장해야 할 로그인, 장바구니, 게임 스코어 등의 정보 관리
     
@@ -14,9 +14,23 @@
 */
 
 
-//쿠키 생성
 var http = require('http');
+//npm cookie handling 모듈 추가
+var cookie = require('cookie');
+
 http.createServer(function(request, response){
+
+    console.log(reqeust.headers.cookie);
+    
+    var cookies = {};
+    //쿠키의 값을 지웠을 때 에러가 나지 않게 (parse가 undefined를 수용x)
+    if(reqeust.headers.cookie !== undefined){
+        cookies = cookie.parse(reqeust.headers.cookie);
+    }
+
+    console.log(cookies);
+    
+    //쿠키 생성
     response.writeHead(200, {
         'Set-Cookie' : ['yummy_cookie=choco', 'tasty_cookie=strawberry']        
     });
