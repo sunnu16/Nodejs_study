@@ -11,6 +11,8 @@
     
     - 트래킹(Tracking)
       사용자 행동을 기록하고 분석하는 용도
+
+    mozilla
 */
 
 
@@ -29,10 +31,18 @@ http.createServer(function(request, response){
     }
 
     console.log(cookies);
-    
+
     //쿠키 생성
     response.writeHead(200, {
-        'Set-Cookie' : ['yummy_cookie=choco', 'tasty_cookie=strawberry']        
-    });
+        'Set-Cookie' : [
+          'yummy_cookie=choco',
+          'tasty_cookie=strawberry',
+          'Permanent=cookies; Max-Age=${60*60*24*30}'
+        ]        
+    }); //Max-Age=${60*60*24*30} 60초*60분*24시간*30일
+    
+    //session cookie - 웹 브라우저가 켜진 상태에서만 유지. 껏다켯을때는 사라짐
+    //permanent cookie - 지속적인 쿠키 (expires:완료되다, ,max-age: 현재 시점에서 얼마나 살아 있을것인가)
+
     response.end('Cookie');
 }).listen(5000);
