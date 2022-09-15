@@ -37,12 +37,17 @@ http.createServer(function(request, response){
         'Set-Cookie' : [
           'yummy_cookie=choco',
           'tasty_cookie=strawberry',
-          'Permanent=cookies; Max-Age=${60*60*24*30}'
-        ]        
-    }); //Max-Age=${60*60*24*30} 60초*60분*24시간*30일
+          'Permanent=cookies; Max-Age=${60*60*24*30}',
+          //Max-Age=${60*60*24*30} 60초*60분*24시간*30일
+          'Secure=Secure; Secure',
+          'HttpOnly=HttpOnly; HttpOnly'
+
+        ]
+    }); 
     
     //session cookie - 웹 브라우저가 켜진 상태에서만 유지. 껏다켯을때는 사라짐
     //permanent cookie - 지속적인 쿠키 (expires:완료되다, ,max-age: 현재 시점에서 얼마나 살아 있을것인가)
-
+    //Secure - Secure 옵션을 주면 https를 사용하는 경우에만 통신을 하여 보안 강화
+    //HttpOnly - 웹 브라우저와 서버가 통신할때만 쿠키를 발행 / 자바스크립트를 사용하여 쿠키의 값을 훔치는 행위를 방어
     response.end('Cookie');
 }).listen(5000);
