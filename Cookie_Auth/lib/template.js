@@ -15,6 +15,7 @@ module.exports = {
             <meta charset="utf-8">
         </head>
         <body>
+            <a href="/login">🎠Login🎠</a>
             <h1><a href="/">🚀Node.js & WEB🚀</a></h1>
                 
             ${list}

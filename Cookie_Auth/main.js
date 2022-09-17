@@ -6,6 +6,7 @@
       - Error handler
       - Express.Router
       - Express security
+      - Login
 */
 
 
@@ -26,6 +27,8 @@ app.use(helmet());
 
 // indexRouter
 var indexRouter = require('./routes/index');
+//logingRouter
+var loginRouter = require('./routes/login');
 // topticRouter
 var topicRouter = require('./routes/topic');
 
@@ -59,8 +62,11 @@ app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (
 });
 
 
-// /index로 시작하는 주소들은 topicRouter라는 middleware을 적용
-app.use('/', indexRouter );
+// /index로 시작하는 주소들은 indexRouter라는 middleware을 적용
+app.use('/', indexRouter);
+
+// /login로 시작하는 주소들은 loginRouter라는 middleware을 적용
+app.use('/login', loginRouter);
 
 // /topic으로 시작하는 주소들은 topicRouter라는 middleware을 적용
 app.use('/topic', topicRouter);
