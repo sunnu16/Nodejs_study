@@ -27,8 +27,8 @@ router.get('/', function(request, response){
   var html = template.HTML(title,
     
     `
-    <form action = "login_process" method = "post">
-      <p><input type="text" name="eail" placeholder="e-mail"></p>
+    <form action = "/login/login_process" method = "post">
+      <p><input type="text" name="email" placeholder="email"></p>
       <p><input type="password" name="password" placeholder="password"></p>
       <p><input type="submit" value="🔑LOGIN🔑"></p>
     </form>
@@ -45,9 +45,9 @@ router.get('/', function(request, response){
 });
 
 
-// /login_process
+
 router.post('/login_process', function(request, response){
-    
+  
   var body = '';
   request.on('data', function(data){
 
@@ -57,31 +57,28 @@ router.post('/login_process', function(request, response){
     접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) 
     */
   });
+  //console.log(request.body.email)
 
-  //data 수신이 끝났을때
-  request.on('end', function(){
-
-    var post = qs.parse(body); //post에 정보가 입력
+  var post = request.body; //post에 정보가 입력
     
-    //사용자의 이메일 & 패스워드
-    if(post.email === 'aaa123@node.com' && post.password ==='12345'){
-      response.writeHead(302, {
+  //사용자의 이메일 & 패스워드
+  if(post.email === 'aaa123@node.com' && post.password === '12345'){
+    //response.cookie(`email=${post.email}`, `password=${post.password}`, { secure: true, 옵션:옵션 });
+    response.writeHead(302, {
 
-        'Set-Cookie':[
-          `email=${post.email}`,
-          `password=${post.password}`,
-          `nickname=rich`
-        ],
-        Location: `/` //로그인을 성공하면 홈으로
-      });
-      response.end();
-      
-    } else {
-      response.end('Login fail');
-    }
-           
-
-  });
+      'Set-Cookie':[
+        `email=${post.email}`,
+        `password=${post.password}`,
+        `nickname=rich`
+      ],      
+      Location: `/` //로그인을 성공하면 홈으로
+    }); 
+    response.end(); 
+    
+  } else {
+    //로그인 실패시
+    response.end('Login fail');
+  }
 
 });
 
