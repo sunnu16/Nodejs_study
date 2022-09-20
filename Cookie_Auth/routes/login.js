@@ -21,7 +21,7 @@ var template = require('../lib/template.js');
 // /login
 router.get('/', function(request, response){
   // app.get('/', (req, res) => res.send('Hello Express!'))
-    
+
   var title = 'Login';
   var list = template.List(request.list); //topics 함수 불러오기
   var html = template.HTML(title,
@@ -45,25 +45,20 @@ router.get('/', function(request, response){
 });
 
 
-
+// /login_process
 router.post('/login_process', function(request, response){
   
-  var body = '';
-  request.on('data', function(data){
-
-    body = body + data;
-    /*body에다 callback이 실행될 때마다 data를 추가
-    (+전송된 data의 크기가 너무 클때, 
-    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) 
-    */
-  });
-  //console.log(request.body.email)
-
   var post = request.body; //post에 정보가 입력
     
   //사용자의 이메일 & 패스워드
   if(post.email === 'aaa123@node.com' && post.password === '12345'){
-    //response.cookie(`email=${post.email}`, `password=${post.password}`, { secure: true, 옵션:옵션 });
+        
+    response.cookie('email', `${post.email}`, {maxAge : 900000});
+    response.cookie('password', `${post.password}`, {maxAge : 900000});
+    response.cookie('nickname', 'superRich', {maxAge : 900000});
+    response.redirect(`/`);
+   
+    /*
     response.writeHead(302, {
 
       'Set-Cookie':[
@@ -73,12 +68,16 @@ router.post('/login_process', function(request, response){
       ],      
       Location: `/` //로그인을 성공하면 홈으로
     }); 
-    response.end(); 
+    response.send();
+    */
+    
     
   } else {
     //로그인 실패시
-    response.end('Login fail');
+    response.send('Login fail');
   }
+  
+  //});
 
 });
 

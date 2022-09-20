@@ -5,11 +5,28 @@ var express = require('express');
 //express.Router() 호출시, router 객체를 리턴
 var router = express.Router();
 
-var template = require('../lib/template.js');
+var http = require('http');
+var url = require('url');
+var cookie = require('cookie');
+var path = require('path');
 var qs = require('querystring');
+var fs = require('fs');
+var cookieParser = require('cookie-parser')
+
+var template = require('../lib/template.js');
+
 
 // app.get('/', (req, res) => res.send('Hello Express!'))
 router.get('/', function(request, response){
+
+    //cookie 값 체크
+    var isOwner = false;
+    var cookies = {}
+    if(request.headers.cookie){
+    
+      cookies = cookie.parse(request.headers.cookie);
+    }
+    console.log(cookies);
      
     var title = 'Welcome';
     var description = 'Hello, Node.js & Express - HOME';
