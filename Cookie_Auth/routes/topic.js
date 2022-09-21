@@ -7,8 +7,43 @@ var router = express.Router();
 
 var path = require('path');
 var fs = require('fs');
+var cookie = require('cookie');
+var cookieParser = require('cookie-parser')
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
+
+//cookie 체크 function
+function authIsOwner(request, response){
+  
+  var isOwner = false;
+  var cookies = {}
+
+  if(request.headers.cookie){ //쿠키값이 없다면 undefinde
+  
+    cookies = cookie.parse(request.headers.cookie);
+  }
+  //console.log(cookies); //입력되는 쿠키값 확인하기
+  
+  if(cookies.email === 'aaa123@node.com' && cookies.password === '12345'){
+    isOwner = true;
+  }
+  return isOwner;
+  //console.log(isOwner);
+
+}
+
+//authStatusUI funtion
+function authStatusUI(request, response){
+  
+  var authStatusUI = '<a href="/login">🎠Login🎠</a>'
+  if(authIsOwner(request, response)){
+
+    authStatusUI = '<a href="/logout_process">🔒Logout🔒</a>';
+  }return authStatusUI;
+}
+
+//topic list, create, update 로그인시, logout UI
+
 
 // /create
 router.get('/create', function(request, response){  
@@ -27,7 +62,8 @@ router.get('/create', function(request, response){
       </p>
     </form>
     `,
-    `<a href="/topic/create">🌻CREATE🌻</a>`
+    `<a href="/topic/create">🌻CREATE🌻</a>`,
+    authStatusUI(request, response)
   );
 
   response.send(html);
@@ -111,7 +147,8 @@ router.get('/update/:pageId', function(request, response){
       </form>
       `,
 
-      `<a href="/topic/create">🌻CREATE🌻</a> <a href="/topic/update/${title}">💡UPDATE💡</a>`
+      `<a href="/topic/create">🌻CREATE🌻</a> <a href="/topic/update/${title}">💡UPDATE💡</a>`,
+      authStatusUI(request, response)
     ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
 
     response.send(html);
@@ -182,35 +219,7 @@ router.post('/update_process', function(request, response){
 // /delete
 router.post('/delete_process', function(request, response){
 
-  /*
-  var body = '';
-  request.on('data', function(data){
 
-    body = body + data;
-    body에다 callback이 실행될 때마다 data를 추가
-    (+전송된 data의 크기가 너무 클때, 
-    접속을 끊을 보안 장치도 추가 가능한 방법도 존재함을 인지) 
-  });
-
-  //data 수신이 끝났을때
-  request.on('end', function(){
-
-    var post = qs.parse(body); //post에 정보가 입력
-    var id = post.id;
-    var filteredId = path.parse(id).base;
-    fs.unlink(`data/${filteredId}`, function(error){
-      
-      //response.writeHead(302, {Location: `/`});
-      //response.end();
-
-      //express redirect
-      response.redirect('/');
-
-    })       
-
-  });
-
-  */
   var post = request.body;
   var id = post.id;
   var filteredId = path.parse(id).base;
@@ -252,7 +261,8 @@ router.get('/:pageId', function(request, response, next){
           <form action="/topic/delete_process" method="post">
             <input type="hidden" name="id" value="${sanitizeTitle}">
             <input type="submit" value="🔥delete🔥">
-          </form>`
+          </form>`,
+          authStatusUI(request, response)
 
       ); //templateHTML함수에 title, list
       response.send(html);

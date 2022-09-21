@@ -52,11 +52,12 @@ router.post('/login_process', function(request, response){
     
   //사용자의 이메일 & 패스워드
   if(post.email === 'aaa123@node.com' && post.password === '12345'){
-        
+            
     response.cookie('email', `${post.email}`, {maxAge : 900000});
     response.cookie('password', `${post.password}`, {maxAge : 900000});
     response.cookie('nickname', 'superRich', {maxAge : 900000});
     response.redirect(`/`);
+    // id & pw가 일치한다면 쿠키와 페이지를 홈으로 redirect
    
     /*
     response.writeHead(302, {
@@ -70,7 +71,6 @@ router.post('/login_process', function(request, response){
     }); 
     response.send();
     */
-    
     
   } else {
     //로그인 실패시

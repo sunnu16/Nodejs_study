@@ -36,25 +36,35 @@ function authIsOwner(request, response){
 
 }
 
+//authStatusUI funtion
+function authStatusUI(request, response){
+  
+  var authStatusUI = '<a href="/login">🎠Login🎠</a>'
+  if(authIsOwner(request, response)){
+
+    authStatusUI = '<a href="/logout_process">🔒Logout🔒</a>';
+  }return authStatusUI;
+}
+
 
 // app.get('/', (req, res) => res.send('Hello Express!'))
 router.get('/', function(request, response){
 
-
-  //cookie 값 체크
-  var isOwner = authIsOwner(request, response);
-  console.log(isOwner);
-  
   var title = 'Welcome';
   var description = 'Hello, Node.js & Express - HOME';
   var list = template.List(request.list); //topics 함수 불러오기
-  var html = template.HTML(title, list,
-    
+  var html = template.HTML(title, list, 
+        
     `
     <h2>${title}</h2>${description}
     <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
     `,
-    `<a href="/topic/create">🌻CREATE🌻</a>`
+    `<a href="/topic/create">🌻CREATE🌻</a>`,
+    authStatusUI(request, response)
+        
+    
+    //authStatusUI(request, response)
+    
     //templateHTML함수에 title, list
 
   );

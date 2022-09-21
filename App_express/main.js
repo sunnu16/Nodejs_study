@@ -6,6 +6,7 @@
       - Error handler
       - Express.Router
       - Express security
+      - Login
 */
 
 
@@ -13,6 +14,11 @@
 const express = require('express');
 const app = express();
 var fs = require('fs');
+var http = require('http');
+var url = require('url');
+var cookie = require('cookie');
+var cookieParser = require('cookie-parser')
+var path = require('path');
 var qs = require('querystring');
 var bodyParser = require('body-parser');
 var compression = require('compression');
@@ -26,6 +32,8 @@ app.use(helmet());
 
 // indexRouter
 var indexRouter = require('./routes/index');
+//logingRouter
+var loginRouter = require('./routes/login');
 // topticRouter
 var topicRouter = require('./routes/topic');
 
@@ -45,6 +53,8 @@ app.use(bodyParser.urlencoded({extended : false}));
 //compression middleware - 데이터 용량을 압축(gzip)하여 전송하고 압축을 풀어 실행
 app.use(compression());
 
+app.use(cookieParser());
+
 
 //make middleware - fs.readdir('./data', function(error, filelist){}); 공통된 부분
 app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (여기서는 get 방식의 모든요청)
@@ -59,8 +69,11 @@ app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (
 });
 
 
-// /index로 시작하는 주소들은 topicRouter라는 middleware을 적용
-app.use('/', indexRouter );
+// /index로 시작하는 주소들은 indexRouter라는 middleware을 적용
+app.use('/', indexRouter);
+
+// /login로 시작하는 주소들은 loginRouter라는 middleware을 적용
+app.use('/login', loginRouter);
 
 // /topic으로 시작하는 주소들은 topicRouter라는 middleware을 적용
 app.use('/topic', topicRouter);
@@ -93,7 +106,7 @@ app.use(function(error, request, response, next){
 //app.listen(5000, () => console.log('Example app listening on port 5000!'))
 app.listen(5000, function(){
 
-  console.log('Example app listening on port 5000!')
+  console.log('App listening on port 5000!')
 
 });
 
