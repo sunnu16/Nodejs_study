@@ -1,4 +1,4 @@
-// login
+//logout
 
 /*해당 로그인 구현은 cookie를 공부하기 위한 목적이며, 보안상 문제가 많아 실제 사용 x*/
 
@@ -18,24 +18,57 @@ var bodyParser = require('body-parser');
 var template = require('../lib/template.js');
 
 
-// /login
+//cookie 체크 function
+function authIsOwner(request, response){
+  
+    var isOwner = false;
+    var cookies = {}
+  
+    if(request.headers.cookie){ //쿠키값이 없다면 undefinde
+    
+      cookies = cookie.parse(request.headers.cookie);
+    }
+    //console.log(cookies); //입력되는 쿠키값 확인하기
+    
+    if(cookies.email === 'aaa123@node.com' && cookies.password === '12345'){
+      isOwner = true;
+    }
+    return isOwner;
+    //console.log(isOwner);
+  
+  }
+  
+  //authStatusUI funtion
+  function authStatusUI(request, response){
+    
+    var authStatusUI = '<a href="/login">🎠Login🎠</a>'
+    if(authIsOwner(request, response)){
+  
+      authStatusUI = '<a href="/logout">🔒Logout🔒</a>';
+    }
+    return authStatusUI;
+  }
+
+
+// /logout
 router.get('/', function(request, response){
   // app.get('/', (req, res) => res.send('Hello Express!'))
 
-  var title = 'Login';
+  var title = 'Logout';
   var list = template.List(request.list); //topics 함수 불러오기
   var html = template.HTML(title,
     
     `
-    <form action = "/login/login_process" method = "post">
-      <p><input type="text" name="email" placeholder="email"></p>
-      <p><input type="password" name="password" placeholder="password"></p>
-      <p><input type="submit" value="🔑LOGIN🔑"></p>
+    <form action = "/logout/logout_process" method = "post">
+      <h3 style="color:red;">🔥Are you sure you want to log out?🔥</h3>
+      <h3 style="color:red; ">👇Check and press the button below👇</h3>  
+      <p><input type="submit" value="🔐Logout🔐"></p>
     </form>
-    <img src = "/images/coding.jpg" style = "width:380px; display : block;  margin-top: 10px; margin-bottom: 10px;">
+    <img src = "/images/coding2.jpg" style = "width:380px; display : block;  margin-top: 10px; margin-bottom: 10px;">
     `,
     `<a href="/topic/create">🌻CREATE🌻</a>`,
-    list
+    list,
+    authStatusUI(request, response)
     //templateHTML함수에 title, list
 
   );
@@ -45,43 +78,8 @@ router.get('/', function(request, response){
 });
 
 
-// /login_process
-router.post('/login_process', function(request, response){
-  
-  var post = request.body; //post에 정보가 입력
-    
-  //사용자의 이메일 & 패스워드
-  if(post.email === 'aaa123@node.com' && post.password === '12345'){
-            
-    response.cookie('email', `${post.email}`, {maxAge : 900000});
-    response.cookie('password', `${post.password}`, {maxAge : 900000});
-    response.cookie('nickname', 'superRich', {maxAge : 900000});
-    response.redirect(`/`);
-    // id & pw가 일치한다면 쿠키와 페이지를 홈으로 redirect
-   
-    /*
-    response.writeHead(302, {
-
-      'Set-Cookie':[
-        `email=${post.email}`,
-        `password=${post.password}`,
-        `nickname=rich`
-      ],      
-      Location: `/` //로그인을 성공하면 홈으로
-    }); 
-    response.send();
-    */
-    
-  } else {
-    //로그인 실패시
-    response.send('Login fail');
-  }
-  
 
 
-});
-
-/*
 // /logout_process
 router.post('/logout_process', function(request, response){
     
@@ -103,6 +101,6 @@ router.post('/logout_process', function(request, response){
   
 
 });
-*/
+
 
 module.exports = router;

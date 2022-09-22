@@ -42,8 +42,9 @@ function authStatusUI(request, response){
   var authStatusUI = '<a href="/login">🎠Login🎠</a>'
   if(authIsOwner(request, response)){
 
-    authStatusUI = '<a href="/logout_process">🔒Logout🔒</a>';
-  }return authStatusUI;
+    authStatusUI = '<a href="/logout">🔒Logout🔒</a>';
+  }
+  return authStatusUI;
 }
 
 
