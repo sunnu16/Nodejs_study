@@ -47,7 +47,14 @@ function authStatusUI(request, response){
 
 
 // /create
-router.get('/create', function(request, response){  
+router.get('/create', function(request, response){
+
+  //접근 제어
+  if(authIsOwner(request, response) === false){
+
+    response.end('Login Required!!');
+    return false;
+  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
                     
   var title = 'Create';
   var list = template.List(request.list); //topics 함수 불러오기
@@ -104,7 +111,13 @@ router.post('/create_process', function(request, response){
   }); 
   */
 
-  //request.body
+  //접근 제어
+  if(authIsOwner(request, response) === false){
+
+    response.end('Login Required!!');
+    return false;
+  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
+
   var post = request.body;
   var title = post.title;
   var description = post.description;
@@ -122,6 +135,13 @@ router.post('/create_process', function(request, response){
 
 // /update
 router.get('/update/:pageId', function(request, response){
+
+  //접근 제어
+  if(authIsOwner(request, response) === false){
+
+    response.end('Login Required!!');
+    return false;
+  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
   
   var filteredId = path.parse(request.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
@@ -199,6 +219,13 @@ router.post('/update_process', function(request, response){
 
   */
 
+  //접근 제어
+  if(authIsOwner(request, response) === false){
+
+    response.end('Login Required!!');
+    return false;
+  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
+
   var post = request.body; //post에 정보가 입력
   var id = post.id;
   var title = post.title;
@@ -219,7 +246,13 @@ router.post('/update_process', function(request, response){
 
 // /delete
 router.post('/delete_process', function(request, response){
+  
+  //접근 제어
+  if(authIsOwner(request, response) === false){
 
+    response.end('Login Required!!');
+    return false;
+  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
 
   var post = request.body;
   var id = post.id;
@@ -235,6 +268,13 @@ router.post('/delete_process', function(request, response){
 
 // page detail view
 router.get('/:pageId', function(request, response, next){
+
+  //접근 제어
+  if(authIsOwner(request, response) === false){
+
+    response.end('Login Required!!');
+    return false;
+  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
   
   var filteredId = path.parse(request.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
