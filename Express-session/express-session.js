@@ -26,18 +26,25 @@
 
 var express = require('express')
 var parseurl = require('parseurl')
+
 //express-session 미들웨어를 모듈로서 설치
 var session = require('express-session')
-const { request } = require('express')
+//session-file-store
+var FileStore = require('session-file-store')(session)
+// -> session-file-store 대신 mysql을 사용하여 저장가능
+
   
 var app = express()
 
 //app.use는 사용자 요청이 있을때마다 실행(session이라는 함수가 실행)
 app.use(session({
-
-  secret: 'keyboard cat', //secret 옵션은 필수
-  resave: false, // session 데이터가 바뀌기 전까지는, 저장소 값을 저장하지 않는다
-  saveUninitialized: true // session이 필요하기 전까지는, session을 구동시키지 않는다
+    
+    secret : 'keyboard cat', //secret 옵션은 필수
+    resave : false, // session 데이터가 바뀌기 전까지는, 저장소 값을 저장하지 않는다
+    saveUninitialized : true, // session이 필요하기 전까지는, session을 구동시키지 않는다
+    store : new FileStore() 
+    //seessions의 명을 가진 dir를 생성하여 쿠키값을 저장 
+    //->사용자가 session id를 가진 상태로 서버 접속 하면 cookie값으로 session id를 전달
 
 })) // 옵션(객체)를 통해 세션의 동작 방법을 바꿀 수 있음
   
@@ -55,7 +62,9 @@ app.get('/', function (req, res, next) {
 }) //reload할때마다 View가 카운트되도록 (session 객체에 num이 없기때문)
     //첫 요청에서 1의 값을 저장(메모리)했기때문에 매 요청마다 사용자의 정보를 유지가능
  
+
 app.listen(5000, function(){
+    
     console.log('5000!');
 });
 
