@@ -26,16 +26,33 @@
 
 var express = require('express')
 var parseurl = require('parseurl')
+//express-session 미들웨어를 모듈로서 설치
 var session = require('express-session')
   
 var app = express()
-  
+
+//app.use는 사용자 요청이 있을때마다 실행(session이라는 함수가 실행)
 app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true
-}))
+
+  secret: 'keyboard cat', //secret 옵션은 필수
+  resave: false, // session 데이터가 바뀌기 전까지는, 저장소 값을 저장하지 않는다
+  saveUninitialized: true // session이 필요하기 전까지는, session을 구동시키지 않는다
+
+})) // 옵션(객체)를 통해 세션의 동작 방법을 바꿀 수 있음
   
+
+app.get('/', function (req, res, next) {
+  res.send('Hello session')
+})
+ 
+app.listen(5000, function(){
+    console.log('5000!');
+});
+
+
+
+
+/*
 app.use(function (req, res, next) {
   if (!req.session.views) {
     req.session.views = {}
@@ -57,7 +74,10 @@ app.get('/foo', function (req, res, next) {
 app.get('/bar', function (req, res, next) {
   res.send('you viewed this page ' + req.session.views['/bar'] + ' times')
 })
+
  
 app.listen(5000, function(){
     console.log('5000!');
 });
+
+*/
