@@ -28,6 +28,7 @@ var express = require('express')
 var parseurl = require('parseurl')
 //express-session 미들웨어를 모듈로서 설치
 var session = require('express-session')
+const { request } = require('express')
   
 var app = express()
 
@@ -42,8 +43,17 @@ app.use(session({
   
 
 app.get('/', function (req, res, next) {
-  res.send('Hello session')
-})
+    
+    console.log(req.session);
+    if(req.session.num === undefined){
+
+        req.session.num = 1;
+    } else {
+        req.session.num = req.session.num +1;
+    }
+    res.send(`View : ${req.session.num}`);
+}) //reload할때마다 View가 카운트되도록 (session 객체에 num이 없기때문)
+    //첫 요청에서 1의 값을 저장(메모리)했기때문에 매 요청마다 사용자의 정보를 유지가능
  
 app.listen(5000, function(){
     console.log('5000!');
@@ -81,3 +91,4 @@ app.listen(5000, function(){
 });
 
 */
+
