@@ -6,7 +6,7 @@
 module.exports = {
     
     //home
-    HTML: function (title, list, body, control) {
+    HTML: function (title, list, body, control, authStatusUI='<a href="/auth/login">🔑LOGIN🔑</a>') {
         return `
         <!doctype html>
         <html>
@@ -15,9 +15,8 @@ module.exports = {
             <meta charset="utf-8">
         </head>
         <body>
-            <a href="/auth/login">🔑LOGIN🔑</a>
-            <h1><a href="/">🚀Node.js & WEB🚀</a></h1>
-                
+            ${authStatusUI}
+            <h1><a href="/">🚀Node.js & WEB🚀</a></h1>                
             ${list}
             ${control}
             ${body}

@@ -7,7 +7,7 @@
       - Express.Router
       - Express security
       - Login
-      - Express Session
+      - Express Session login
 */
 
 
@@ -18,12 +18,17 @@ var fs = require('fs');
 var http = require('http');
 var url = require('url');
 var cookie = require('cookie');
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
 var path = require('path');
 var qs = require('querystring');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 
+//express-session 미들웨어를 모듈로서 설치
+var session = require('express-session');
+
+var FileStore = require('session-file-store')(session)
+// -> session-file-store 대신 mysql을 사용하여 저장가능
 
 //static files
 app.use(express.static('public')); //정적인 파일을 서비스하고 싶을때, 서비스 하고픈 dir을 직접 지정
@@ -34,7 +39,23 @@ app.use(bodyParser.urlencoded({extended : false}));
 //bodyparser가 만들어내는 middleware를 표현하는 식 - 요청할때마다 middleware가 실행
 /* - 데이터를 내가 원하는 형태의 데이터로 ‘가공'하는 과정을 parsing.
      그 과정을 수행하는 모듈 혹은 메소드를 parser 라한다.
-   - 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 */
+   - 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 
+*/
+
+//compression middleware - 데이터 용량을 압축(gzip)하여 전송하고 압축을 풀어 실행
+app.use(compression());
+
+// session middleware
+app.use(session({
+    
+  secret : 'keyboard cat', //secret 옵션은 필수
+  resave : false, // session 데이터가 바뀌기 전까지는, 저장소 값을 저장하지 않는다
+  saveUninitialized : true, // session이 필요하기 전까지는, session을 구동시키지 않는다
+  store : new FileStore() 
+  //seessions의 명을 가진 dir를 생성하여 쿠키값을 저장 
+  //->사용자가 session id를 가진 상태로 서버 접속 하면 cookie값으로 session id를 전달
+
+})); // 옵션(객체)를 통해 세션의 동작 방법을 바꿀 수 있음
 
 
 //make middleware - fs.readdir('./data', function(error, filelist){}); 공통된 부분

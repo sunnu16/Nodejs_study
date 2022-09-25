@@ -16,6 +16,57 @@ var cookieParser = require('cookie-parser')
 var template = require('../lib/template.js');
 
 
+// login check
+function authIsOwner(request, response){
+  if(request.session.is_logined){
+
+    return true;
+  } else{
+
+    return false;
+  }
+}
+
+// login status
+function authStatusUI(request, response){
+  
+  var authStatusUI = '<a href="/auth/login">🔑LOGIN🔑</a>';
+  if(authIsOwner(request, response)){
+
+    authStatusUI = `🍀${request.session.nickname}🍀 <a href="/logout">🔒Logout🔒</a>`;
+  }
+  return authStatusUI;
+}
+
+
+// app.get('/', (req, res) => res.send('Hello Express!'))
+router.get('/', function(request, response){
+  console.log(request.session);
+
+  var title = 'Welcome';
+  var description = 'Hello, Node.js & Express - HOME';
+  var list = template.List(request.list); //topics 함수 불러오기
+  var html = template.HTML(title, list, 
+        
+    `
+    <h2>${title}</h2>${description}
+    <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
+    `,
+    `<a href="/topic/create">🌻CREATE🌻</a>`,
+    authStatusUI(request, response) //function
+
+    //templateHTML함수에 title, list
+
+  );
+   
+  response.send(html); // writeHead(200)+ end(html)
+    
+});
+
+
+
+
+/*
 //cookie 체크 function
 function authIsOwner(request, response){
   
@@ -46,32 +97,8 @@ function authStatusUI(request, response){
   }
   return authStatusUI;
 }
+*/
 
 
-// app.get('/', (req, res) => res.send('Hello Express!'))
-router.get('/', function(request, response){
-
-  var title = 'Welcome';
-  var description = 'Hello, Node.js & Express - HOME';
-  var list = template.List(request.list); //topics 함수 불러오기
-  var html = template.HTML(title, list, 
-        
-    `
-    <h2>${title}</h2>${description}
-    <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
-    `,
-    `<a href="/topic/create">🌻CREATE🌻</a>`,
-    authStatusUI(request, response)
-        
-    
-    //authStatusUI(request, response)
-    
-    //templateHTML함수에 title, list
-
-  );
-   
-  response.send(html); // writeHead(200)+ end(html)
-    
-});
 
 module.exports = router;

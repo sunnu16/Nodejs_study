@@ -11,21 +11,19 @@ var cookie = require('cookie');
 var cookieParser = require('cookie-parser')
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
-const { request } = require('http');
-const { response } = require('express');
+
 
 
 //user id, pwd, nickname 실제 서비스에선 사용x 공부목적으로 구현
 var authData = {
-  email : 'aaa123@express.com',
-  password : '12345',
-  nickname : 'express'
+  email:'aaa123@express.com',
+  password:'12345',
+  nickname:'Super Rich'
 }
 
 
 // /login
 router.get('/login', function(request, response){
-
 
   var title = 'LOGIN';
   var list = template.List(request.list); //topics 함수 불러오기
@@ -37,6 +35,7 @@ router.get('/login', function(request, response){
       <p>
         <input type="submit" value="🔑LOGIN🔑">
       </p>
+      <img src = "/images/coding2.jpg" style = "width:500px; display : block; margin-top: 10px;">
     </form>
     `,
     `<a href="/topic/create">🌻CREATE🌻</a>`
@@ -56,15 +55,20 @@ router.post('/login_process', function(request, response){
 
   if(email === authData.email && password === authData.password){
     
+    request.session.is_logined = true;
+    request.session.nickname = authData.nickname;
+
+    response.redirect(`/`);
+    
     //login success
-    response.send('Login success!');
+    //response.send('Login success!');
   } else {
 
     //login fail
     response.send('Login fail!');
   }
   
-  //response.redirect(`/auth/`);
+  
 
 }); 
 
