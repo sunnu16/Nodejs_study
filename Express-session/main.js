@@ -7,6 +7,7 @@
       - Express.Router
       - Express security
       - Login
+      - Express Session
 */
 
 
@@ -23,22 +24,6 @@ var qs = require('querystring');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 
-/*
-// helmet은 보안 이슈를 해결주는 모듈
-var helmet = require('helmet');
-app.use(helmet());
-*/
-
-
-// indexRouter
-var indexRouter = require('./routes/index');
-//logingRouter
-var loginRouter = require('./routes/login');
-//logoutRouter
-var logoutRouter = require('./routes/logout');
-// topticRouter
-var topicRouter = require('./routes/topic');
-
 
 //static files
 app.use(express.static('public')); //정적인 파일을 서비스하고 싶을때, 서비스 하고픈 dir을 직접 지정
@@ -50,12 +35,6 @@ app.use(bodyParser.urlencoded({extended : false}));
 /* - 데이터를 내가 원하는 형태의 데이터로 ‘가공'하는 과정을 parsing.
      그 과정을 수행하는 모듈 혹은 메소드를 parser 라한다.
    - 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출 */
-
-
-//compression middleware - 데이터 용량을 압축(gzip)하여 전송하고 압축을 풀어 실행
-app.use(compression());
-
-app.use(cookieParser());
 
 
 //make middleware - fs.readdir('./data', function(error, filelist){}); 공통된 부분
@@ -71,17 +50,24 @@ app.get('*', function(request, response, next){  //'*'은 모든 요청 의미 (
 });
 
 
+// indexRouter
+var indexRouter = require('./routes/index');
+
+// topticRouter
+var topicRouter = require('./routes/topic');
+
+// authRouter
+var authRouter = require('./routes/auth');
+
+
 // /index로 시작하는 주소들은 indexRouter라는 middleware을 적용
 app.use('/', indexRouter);
 
-// /login로 시작하는 주소들은 loginRouter라는 middleware을 적용
-app.use('/login', loginRouter);
-
-// /logout로 시작하는 주소들은 loginRouter라는 middleware을 적용
-app.use('/logout', logoutRouter);
-
 // /topic으로 시작하는 주소들은 topicRouter라는 middleware을 적용
 app.use('/topic', topicRouter);
+
+// /auth으로 시작하는 주소들은 authRouter라는 middleware을 적용
+app.use('/auth', authRouter);
 
 
 //route, routing - 사용자가 여러 path를 통해 접속할때, 각 path 마다 해당하는 응답을 해주는것
