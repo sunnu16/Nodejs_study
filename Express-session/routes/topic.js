@@ -10,51 +10,14 @@ var fs = require('fs');
 var cookie = require('cookie');
 var cookieParser = require('cookie-parser')
 var sanitizeHtml = require('sanitize-html');
+
 var template = require('../lib/template.js');
+var auth = require('../lib/auth.js');
 
-//cookie 체크 function
-function authIsOwner(request, response){
-  
-  var isOwner = false;
-  var cookies = {}
-
-  if(request.headers.cookie){ //쿠키값이 없다면 undefinde
-  
-    cookies = cookie.parse(request.headers.cookie);
-  }
-  //console.log(cookies); //입력되는 쿠키값 확인하기
-  
-  if(cookies.email === 'aaa123@node.com' && cookies.password === '12345'){
-    isOwner = true;
-  }
-  return isOwner;
-  //console.log(isOwner);
-
-}
-
-//authStatusUI funtion
-function authStatusUI(request, response){
-  
-  var authStatusUI = '<a href="/login">🎠Login🎠</a>'
-  if(authIsOwner(request, response)){
-    
-    authStatusUI = '<a href="/logout">🔒Logout🔒</a>';
-  }
-  return authStatusUI;
-}
-
-//topic list, create, update 로그인시, logout UI
 
 
 // /create
 router.get('/create', function(request, response){
-
-  //접근 제어
-  if(authIsOwner(request, response) === false){
-
-    response.end('Login Required!!');
-    return false;
-  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
                     
   var title = 'Create';
   var list = template.List(request.list); //topics 함수 불러오기
@@ -71,7 +34,8 @@ router.get('/create', function(request, response){
     </form>
     `,
     `<a href="/topic/create">🌻CREATE🌻</a>`,
-    authStatusUI(request, response)
+    auth.StatusUI(request, response) //login status 추가
+    
   );
 
   response.send(html);
@@ -135,13 +99,6 @@ router.post('/create_process', function(request, response){
 
 // /update
 router.get('/update/:pageId', function(request, response){
-
-  //접근 제어
-  if(authIsOwner(request, response) === false){
-
-    response.end('Login Required!!');
-    return false;
-  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
   
   var filteredId = path.parse(request.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
@@ -169,7 +126,8 @@ router.get('/update/:pageId', function(request, response){
       `,
 
       `<a href="/topic/create">🌻CREATE🌻</a> <a href="/topic/update/${title}">💡UPDATE💡</a>`,
-      authStatusUI(request, response)
+      auth.StatusUI(request, response) //login status 추가
+      
     ); //특정 토픽 선택시, update 링크 표시 + update 엔드포인트 ?id${title}연결
 
     response.send(html);
@@ -247,13 +205,6 @@ router.post('/update_process', function(request, response){
 // /delete
 router.post('/delete_process', function(request, response){
   
-  //접근 제어
-  if(authIsOwner(request, response) === false){
-
-    response.end('Login Required!!');
-    return false;
-  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
-
   var post = request.body;
   var id = post.id;
   var filteredId = path.parse(id).base;
@@ -268,13 +219,6 @@ router.post('/delete_process', function(request, response){
 
 // page detail view
 router.get('/:pageId', function(request, response, next){
-
-  //접근 제어
-  if(authIsOwner(request, response) === false){
-
-    response.end('Login Required!!');
-    return false;
-  } //로그인 상태가 아니면 다음으로 넘어가지 않도록
   
   var filteredId = path.parse(request.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(error, description){
@@ -303,7 +247,7 @@ router.get('/:pageId', function(request, response, next){
             <input type="hidden" name="id" value="${sanitizeTitle}">
             <input type="submit" value="🔥delete🔥">
           </form>`,
-          authStatusUI(request, response)
+          auth.StatusUI(request, response) //login status 추가
 
       ); //templateHTML함수에 title, list
       response.send(html);

@@ -14,29 +14,7 @@ var cookie = require('cookie');
 var cookieParser = require('cookie-parser')
 
 var template = require('../lib/template.js');
-
-
-// login check
-function authIsOwner(request, response){
-  if(request.session.is_logined){
-
-    return true;
-  } else{
-
-    return false;
-  }
-}
-
-// login status
-function authStatusUI(request, response){
-  
-  var authStatusUI = '<a href="/auth/login">🔑LOGIN🔑</a>';
-  if(authIsOwner(request, response)){
-
-    authStatusUI = `🍀${request.session.nickname}🍀 <a href="/logout">🔒Logout🔒</a>`;
-  }
-  return authStatusUI;
-}
+var auth = require('../lib/auth.js');
 
 
 // app.get('/', (req, res) => res.send('Hello Express!'))
@@ -53,7 +31,7 @@ router.get('/', function(request, response){
     <img src = "/images/hello.jpg" style = "width:500px; display : block; margin-top: 10px;">
     `,
     `<a href="/topic/create">🌻CREATE🌻</a>`,
-    authStatusUI(request, response) //function
+    auth.StatusUI(request, response)   // /lib/auth.js
 
     //templateHTML함수에 title, list
 

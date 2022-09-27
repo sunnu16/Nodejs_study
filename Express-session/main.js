@@ -48,7 +48,7 @@ app.use(compression());
 // session middleware
 app.use(session({
    
-  //key : 'is_logined', //auth.js -> req.session.is_logined   생략 가능
+  //key : 'is_logined', //auth.js -> req.session.is_logined 
   secret : 'very&super&secret', //secret 옵션은 필수(단, 실서비스시, 따로 처리해줘야함 노출x)
   resave : false, // session 데이터가 바뀌기 전까지는, 저장소 값을 저장하지 않는다
   saveUninitialized : true, // session이 필요하기 전까지는, session을 구동시키지 않는다
