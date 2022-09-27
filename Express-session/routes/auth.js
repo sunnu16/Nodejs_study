@@ -1,4 +1,4 @@
-//auth.js
+// routes/auth.js
 
 //express를 다시 로딩
 var express = require('express');
@@ -65,19 +65,27 @@ router.post('/login_process', function(request, response){
 
     }); //session store에 기록하는 작업속도보다 redirect가 훨씬 빨리 끝나기 때문에 session객체에 save
     
-    
-    
     //login success
     //response.send('Login success!');
   } else {
 
     //login fail
     response.send('Login fail!');
-  }
-  
-  
+  } 
 
-}); 
+});
+
+// /logout
+router.get('/logout', function(request, response){
+
+  //session.destroy(callback) - 세션 삭제 메소드(callback은 세션 삭제후 호출)  
+  request.session.destroy(function(error){
+
+    response.redirect(`/`);  //로그아웃시(세션삭제), 홈으로
+  });
+
+});
+//기존 세션이 삭제된 후, 홈으로 redirect하면서 새로운 세션이 발급
 
 
 

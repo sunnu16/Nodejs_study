@@ -22,7 +22,7 @@ module.exports = {
         var authStatusUI = '<a href="/auth/login">🔑LOGIN🔑</a>';
         if(this.IsOwner(request, response)){
     
-            authStatusUI = `🍀${request.session.nickname}🍀 <a href="/logout">🔒Logout🔒</a>`;
+            authStatusUI = `🍀${request.session.nickname}🍀 <a href="/auth/logout">🔒Logout🔒</a>`;
         }
         return authStatusUI;
     }
