@@ -56,9 +56,16 @@ router.post('/login_process', function(request, response){
   if(email === authData.email && password === authData.password){
     
     request.session.is_logined = true;
-    request.session.nickname = authData.nickname;
+    request.session.nickname = authData.nickname; //session store에 기록(메모리에 저장된 세션data를 저장소에 반영하는 작업)
+    //console.log(request.session.nickname);
 
-    response.redirect(`/`);
+    request.session.save(function(){
+      
+      response.redirect(`/`);
+
+    }); //session store에 기록하는 작업속도보다 redirect가 훨씬 빨리 끝나기 때문에 session객체에 save
+    
+    
     
     //login success
     //response.send('Login success!');
